@@ -13,7 +13,7 @@ This backlog defines the complete implementation sequence, from initial reposito
 
 ---
 
-# Milestone 0 — Project Inspection
+# Milestone 0 — Project foundation and architecture (completed)
 
 ## B0.1 — Inspect the existing repository
 
@@ -50,7 +50,7 @@ This backlog defines the complete implementation sequence, from initial reposito
 
 ---
 
-# Milestone 1 — Foundation and Data
+# Milestone 1 — Application foundation and content
 
 ## B1.1 — Establish application structure
 
@@ -66,18 +66,18 @@ This backlog defines the complete implementation sequence, from initial reposito
 
 ## B1.2 — Implement category and word models
 
-- [ ] Create the category model.
-- [ ] Create the word model.
-- [ ] Define stable unique identifiers.
-- [ ] Define the bundled data format.
-- [ ] Implement local data loading.
-- [ ] Implement basic data validation.
+- [x] Create the category model.
+- [x] Create the word model.
+- [x] Define stable unique identifiers.
+- [x] Define the bundled data format.
+- [x] Implement local data loading.
+- [x] Implement basic data validation.
 
 **Acceptance criteria:**
 
-- Categories and words load from bundled assets.
-- Invalid or missing data is handled safely.
-- Adding words does not require modifying gameplay logic.
+- [x] Categories and words load from bundled assets.
+- [x] Invalid or missing data is handled safely.
+- [x] Adding words does not require modifying gameplay logic.
 
 ## B1.3 — Populate the 20 initial categories
 
@@ -114,7 +114,7 @@ Initial target: 50–100 words per category.
 
 ---
 
-# Milestone 2 — Application UI
+# Milestone 2 — Complete UI implementation
 
 ## B2.1 — Implement the home screen
 
@@ -162,7 +162,7 @@ Initial target: 50–100 words per category.
 
 ---
 
-# Milestone 3 — Game Logic
+# Milestone 3 — Core gameplay mechanics
 
 ## B3.1 — Implement word-pool generation
 
@@ -215,7 +215,7 @@ Initial target: 50–100 words per category.
 
 ---
 
-# Milestone 4 — Gameplay Interface and Sensors
+# Milestone 4 — Tilt sensor integration and testing
 
 ## B4.1 — Implement gameplay screen
 
@@ -271,7 +271,7 @@ Initial target: 50–100 words per category.
 
 ---
 
-# Milestone 5 — Results and Replay
+# Milestone 5 — Polish, validation, and release preparation
 
 ## B5.1 — Implement results screen
 
@@ -303,10 +303,6 @@ Initial target: 50–100 words per category.
 - Previous results remain unchanged.
 - Word repetition is avoided where possible.
 
----
-
-# Milestone 6 — Visual Polish
-
 ## B6.1 — Refine visual identity
 
 - [ ] Establish consistent typography.
@@ -331,10 +327,6 @@ Initial target: 50–100 words per category.
 - All screens share a consistent design language.
 - Animations remain lightweight.
 - The game remains responsive.
-
----
-
-# Milestone 7 — Testing and Reliability
 
 ## B7.1 — Test category data
 
@@ -388,10 +380,6 @@ Initial target: 50–100 words per category.
 - All critical game flows work without internet.
 - No unexpected crashes occur.
 - No critical scoring or timer defects remain.
-
----
-
-# Milestone 8 — Android Release
 
 ## B8.1 — Prepare Android configuration
 

@@ -30,18 +30,29 @@ class CategoryRepository {
   bool get isLoaded => _loaded;
 
   /// Load categories from the bundled JSON asset.
+  ///
+  /// Missing or malformed asset data is surfaced as a clear error so the
+  /// application can handle it safely at startup instead of crashing.
   Future<void> load({
     String assetPath = 'assets/data/categories.json',
   }) async {
     if (_loaded) return;
-    final jsonString = await rootBundle.loadString(assetPath);
-    final data = jsonDecode(jsonString) as Map<String, dynamic>;
-    final list = data['categories'] as List<dynamic>;
-    _categories
-      ..clear()
-      ..addAll(list.map((e) => _parseCategory(e as Map<String, dynamic>)));
-    _validate();
-    _loaded = true;
+    try {
+      final jsonString = await rootBundle.loadString(assetPath);
+      final data = jsonDecode(jsonString) as Map<String, dynamic>;
+      final list = data['categories'] as List<dynamic>;
+      _categories
+        ..clear()
+        ..addAll(list.map((e) => _parseCategory(e as Map<String, dynamic>)));
+      _validate();
+      _loaded = true;
+    } on FormatException catch (e) {
+      throw StateError('Invalid category data format in $assetPath: $e');
+    } on StateError {
+      rethrow;
+    } catch (e) {
+      throw StateError('Failed to load category data from $assetPath: $e');
+    }
   }
 
   Category _parseCategory(Map<String, dynamic> json) {
