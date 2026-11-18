@@ -7,9 +7,8 @@ import '../../presentation/widgets/app_button.dart';
 
 /// The application home screen.
 ///
-/// Displays branding, a tagline, and a prominent Play action that navigates
-/// to the category selection screen. Uses [SingleChildScrollView] so the
-/// layout adapts to different screen sizes without bottom overflow.
+/// Features a polished, modern dashboard layout with deep support for
+/// both light and dark themes using dynamic Material 3 color schemes.
 class HomeScreen extends StatelessWidget {
   final bool isDarkMode;
   final VoidCallback onToggleTheme;
@@ -22,170 +21,218 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final primary = colorScheme.primary;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              primary,
-              primary.withValues(alpha: 0.85),
-              primary.withValues(alpha: 0.7),
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: IconButton(
-                      onPressed: onToggleTheme,
-                      tooltip: isDarkMode
-                          ? 'Use light theme'
-                          : 'Use dark theme',
-                      style: IconButton.styleFrom(
-                        backgroundColor: Colors.white.withValues(alpha: 0.16),
-                        foregroundColor: Colors.white,
-                      ),
-                      icon: Icon(
-                        isDarkMode ? Icons.wb_sunny : Icons.nightlight_round,
-                      ),
-                    ),
+      backgroundColor: colorScheme.surface,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            // Ambient background glow for visual depth
+            Positioned(
+              top: -80,
+              right: -80,
+              child: Container(
+                width: 240,
+                height: 240,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: colorScheme.primary.withValues(
+                    alpha: isDarkMode ? 0.12 : 0.08,
                   ),
                 ),
-                const SizedBox(height: 8),
-
-                // Branding
-                Column(
-                  children: [
-                    Container(
-                      width: 96,
-                      height: 96,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.4),
-                          width: 3,
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.games,
-                        color: Colors.white,
-                        size: 48,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      AppConstants.appName,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 48,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -1.5,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Guess the word before time runs out!',
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.9),
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 64),
-
-                // Content card
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: colorScheme.surface,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(32),
-                      topRight: Radius.circular(32),
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+              ),
+            ),
+            SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 12),
+                  // Top bar with theme toggle & status indicator
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const SizedBox(height: 14),
                       Container(
-                        width: 44,
-                        height: 5,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
-                          color: colorScheme.outlineVariant,
-                          borderRadius: BorderRadius.circular(8),
+                          color: colorScheme.primaryContainer.withValues(
+                            alpha: 0.5,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.bolt,
+                              size: 16,
+                              color: colorScheme.primary,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'v2.4 Ready',
+                              style: TextStyle(
+                                color: colorScheme.primary,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 24),
-                      Text(
-                        'Your next challenge awaits',
-                        style: Theme.of(context).textTheme.headlineMedium,
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'Pick your categories, set the round duration, and '
-                        'start guessing.',
-                        style: Theme.of(context).textTheme.bodyLarge
-                            ?.copyWith(color: colorScheme.onSurfaceVariant),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 24),
-                      Wrap(
-                        alignment: WrapAlignment.center,
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: const [
-                          _FeaturePill(
-                            icon: Icons.category_outlined,
-                            label: '20 categories',
-                          ),
-                          _FeaturePill(
-                            icon: Icons.wifi_off,
-                            label: 'Offline play',
-                          ),
-                          _FeaturePill(
-                            icon: Icons.screen_rotation_alt,
-                            label: 'Tilt or tap',
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 32),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 28),
-                        child: AppButton(
-                          label: 'START PLAYING',
-                          prominent: true,
-                          onPressed: () {
-                            Navigator.of(context)
-                                .pushNamed(AppRoutes.categorySelection);
-                          },
+                      IconButton.filledTonal(
+                        onPressed: onToggleTheme,
+                        tooltip: isDarkMode
+                            ? 'Switch to light theme'
+                            : 'Switch to dark theme',
+                        icon: Icon(
+                          isDarkMode
+                              ? Icons.wb_sunny_rounded
+                              : Icons.nightlight_round,
                         ),
                       ),
-                      const SizedBox(height: 32),
                     ],
                   ),
-                ),
+                  const SizedBox(height: 36),
 
-                const SizedBox(height: 40),
-              ],
+                  // Hero Branding Section
+                  Center(
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 104,
+                          height: 104,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                colorScheme.primary,
+                                colorScheme.tertiary,
+                              ],
+                            ),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: colorScheme.primary.withValues(
+                                  alpha: 0.3,
+                                ),
+                                blurRadius: 24,
+                                offset: const Offset(0, 12),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.local_fire_department_rounded,
+                            color: Colors.white,
+                            size: 52,
+                          ),
+                        ),
+                        const SizedBox(height: 28),
+                        Text(
+                          AppConstants.appName,
+                          style: theme.textTheme.displaySmall?.copyWith(
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -1.0,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'Guess the word before time runs out!',
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 48),
+
+                  // Feature Card Container
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: isDarkMode
+                          ? colorScheme.surfaceContainerHighest.withValues(
+                              alpha: 0.5,
+                            )
+                          : colorScheme.surfaceContainerLow,
+                      borderRadius: BorderRadius.circular(28),
+                      border: Border.all(
+                        color: colorScheme.outlineVariant.withValues(
+                          alpha: 0.5,
+                        ),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Your next challenge',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          'Pick your categories, set the round duration, and test your reflex instincts.',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: const [
+                            _FeaturePill(
+                              icon: Icons.category_outlined,
+                              label: '20+ Categories',
+                            ),
+                            _FeaturePill(
+                              icon: Icons.wifi_off_rounded,
+                              label: 'Offline Play',
+                            ),
+                            _FeaturePill(
+                              icon: Icons.screen_rotation_alt_rounded,
+                              label: 'Tilt or Tap',
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 40),
+
+                  // Action Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: AppButton(
+                      label: 'START PLAYING',
+                      prominent: true,
+                      onPressed: () {
+                        Navigator.of(context)
+                            .pushNamed(AppRoutes.categorySelection);
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -200,28 +247,31 @@ class _FeaturePill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 16, color: Theme.of(context).colorScheme.primary),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.4),
         ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: colorScheme.primary),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              color: colorScheme.onSurface,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_constants.dart';
-import '../../game/models/game_config.dart';
 import '../../game/models/game_result.dart';
 import '../../presentation/widgets/app_button.dart';
 
@@ -20,106 +19,95 @@ class ResultsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final primary = colorScheme.primary;
 
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              primary,
-              primary.withValues(alpha: 0.85),
-              primary.withValues(alpha: 0.7),
+      backgroundColor: colorScheme.surface,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          child: Column(
+            children: [
+              const SizedBox(height: 16),
+
+              // Trophy Header Icon
+              Container(
+                width: 88,
+                height: 88,
+                decoration: BoxDecoration(
+                  color: colorScheme.primaryContainer.withValues(alpha: 0.6),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: colorScheme.primary.withValues(alpha: 0.3),
+                    width: 2,
+                  ),
+                ),
+                child: Icon(
+                  Icons.emoji_events_rounded,
+                  color: colorScheme.primary,
+                  size: 44,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Round Complete!',
+                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -1.0,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Here is how your session went',
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
+                textAlign: TextAlign.center,
+              ),
+
+              const SizedBox(height: 32),
+
+              // Main Score Card
+              _buildScoreCard(context),
+
+              const SizedBox(height: 24),
+
+              // Detailed breakdown list card
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+                    width: 1.2,
+                  ),
+                ),
+                child: _buildDetailsRow(context),
+              ),
+
+              const SizedBox(height: 36),
+
+              // Action Buttons
+              AppButton(
+                label: 'PLAY AGAIN',
+                prominent: true,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              const SizedBox(height: 12),
+              AppOutlineButton(
+                label: 'CHOOSE CATEGORIES',
+                onPressed: () {
+                  Navigator.of(context).popUntil(
+                    ModalRoute.withName(AppRoutes.categorySelection),
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
             ],
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.only(bottom: 24),
-            child: Column(
-              children: [
-                const SizedBox(height: 48),
-
-                // Header
-                Column(
-                  children: [
-                    Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.4),
-                          width: 3,
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.emoji_events,
-                        color: Colors.white,
-                        size: 40,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      'Round Complete',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 36,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -1,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Great job!',
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.9),
-                        fontSize: 20,
-                        fontWeight: FontWeight.w400,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 32),
-
-                // Results card
-                Container(
-                  decoration: BoxDecoration(
-                    color: colorScheme.surface,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(32),
-                      topRight: Radius.circular(32),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 32),
-
-                      // Score summary
-                      _buildScoreCard(context),
-
-                      const SizedBox(height: 32),
-
-                      // Details row
-                      _buildDetailsRow(context),
-
-                      const SizedBox(height: 40),
-
-                      // Actions
-                      _buildActions(context),
-
-                      const SizedBox(height: 24),
-                    ],
-                  ),
-                ),
-              ],
-            ),
           ),
         ),
       ),
@@ -133,18 +121,15 @@ class ResultsScreen extends StatelessWidget {
         : 0;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 32),
-      padding: const EdgeInsets.all(32),
+      width: double.infinity,
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 24,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        color: colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+          width: 1.5,
+        ),
       ),
       child: Column(
         children: [
@@ -158,51 +143,52 @@ class ResultsScreen extends StatelessWidget {
               letterSpacing: -2,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
           Text(
             'Correct Answers',
-            style: Theme.of(context).textTheme.titleLarge
-                ?.copyWith(fontWeight: FontWeight.w600),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: colorScheme.onSurface,
+            ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
 
-          // Accuracy divider
+          // Accuracy divider row
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildDetailItem(
                 context,
                 '${result.skipped}',
                 'Skipped',
-                Icons.skip_next,
-                Colors.orange,
+                Icons.skip_next_rounded,
+                Colors.orangeAccent,
               ),
               Container(
                 width: 1,
-                height: 40,
-                color: Colors.grey.shade200,
-                margin: const EdgeInsets.symmetric(vertical: 4),
+                height: 44,
+                color: colorScheme.outlineVariant.withValues(alpha: 0.5),
               ),
               _buildDetailItem(
                 context,
                 '${result.durationSeconds}s',
                 'Duration',
-                Icons.access_time,
-                Colors.blue,
+                Icons.timer_rounded,
+                Colors.blueAccent,
               ),
             ],
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
 
-          // Accuracy percentage
+          // Accuracy percentage pill
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             decoration: BoxDecoration(
               color: colorScheme.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: colorScheme.primary.withValues(alpha: 0.3),
+                color: colorScheme.primary.withValues(alpha: 0.25),
                 width: 1,
               ),
             ),
@@ -210,16 +196,16 @@ class ResultsScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  percent >= 70 ? Icons.trending_up : Icons.trending_down,
+                  percent >= 70 ? Icons.trending_up_rounded : Icons.trending_down_rounded,
                   color: colorScheme.primary,
-                  size: 20,
+                  size: 18,
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '$percent% accuracy',
+                  '$percent% accuracy rate',
                   style: TextStyle(
                     color: colorScheme.primary,
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -238,25 +224,26 @@ class ResultsScreen extends StatelessWidget {
     IconData icon,
     Color color,
   ) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, color: color, size: 24),
+        Icon(icon, color: color, size: 22),
         const SizedBox(height: 6),
         Text(
           value,
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w800,
-            color: Theme.of(context).colorScheme.primary,
+            color: colorScheme.onSurface,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 2),
         Text(
           label,
           style: TextStyle(
             fontSize: 12,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            color: colorScheme.onSurfaceVariant,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -265,33 +252,29 @@ class ResultsScreen extends StatelessWidget {
   }
 
   Widget _buildDetailsRow(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: Column(
-        children: [
-          _buildDetailRow(
-            context,
-            'Correct',
-            '${result.correct}',
-            result.durationSeconds == 60
-                ? '1 minute'
-                : '${result.durationSeconds} seconds',
-          ),
-          _buildDetailRow(
-            context,
-            'Skipped',
-            '${result.skipped}',
-            '${result.categoryIds.length} category'
-                '${result.categoryIds.length == 1 ? '' : 'ies'}',
-          ),
-          _buildDetailRow(
-            context,
-            'Total Answered',
-            '${result.answeredCount}',
-            'Out of available words',
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        _buildDetailRow(
+          context,
+          'Round Duration',
+          '${result.durationSeconds}s',
+          result.durationSeconds == 60 ? '1 full minute' : '${result.durationSeconds} seconds total',
+        ),
+        Divider(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3), height: 1),
+        _buildDetailRow(
+          context,
+          'Categories Played',
+          '${result.categoryIds.length}',
+          result.categoryIds.length == 1 ? '1 active category' : '${result.categoryIds.length} categories mixed',
+        ),
+        Divider(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3), height: 1),
+        _buildDetailRow(
+          context,
+          'Total Attempted',
+          '${result.answeredCount}',
+          'Correct + Skipped words',
+        ),
+      ],
     );
   }
 
@@ -301,117 +284,45 @@ class ResultsScreen extends StatelessWidget {
     String value,
     String subtitle,
   ) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                label,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontWeight: FontWeight.w500,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  label,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                subtitle,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontSize: 12,
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           Text(
             value,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            style: TextStyle(
+              fontSize: 18,
               fontWeight: FontWeight.w800,
-              color: Theme.of(context).colorScheme.primary,
+              color: colorScheme.primary,
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildActions(BuildContext context) {
-    return Column(
-      children: [
-        AppButton(
-          label: 'Play Again',
-          onPressed: () {
-            final config = GameConfig(
-              categoryIds: List.unmodifiable(result.categoryIds),
-              durationSeconds: result.durationSeconds,
-            );
-            Navigator.pushReplacementNamed(
-              context,
-              AppRoutes.gameplay,
-              arguments: config,
-            );
-          },
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: OutlinedButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(
-                    context,
-                    AppRoutes.categorySelection,
-                  );
-                },
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Theme.of(context).colorScheme.primary,
-                  minimumSize: const Size(double.infinity, 52),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  side: BorderSide(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: const Text(
-                  'Change Categories',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        OutlinedButton(
-          onPressed: () {
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              AppRoutes.home,
-              (route) => false,
-            );
-          },
-          style: OutlinedButton.styleFrom(
-            foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
-            minimumSize: const Size(double.infinity, 52),
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            side: BorderSide(
-              color: Theme.of(context).colorScheme.outlineVariant,
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          child: const Text(
-            'Return to Home',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-          ),
-        ),
-      ],
     );
   }
 }

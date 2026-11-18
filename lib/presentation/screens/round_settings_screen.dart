@@ -9,7 +9,6 @@ import '../../data/repositories/category_repository.dart';
 import '../../game/models/game_config.dart';
 import '../../presentation/widgets/app_button.dart';
 import '../../presentation/widgets/app_scaffold.dart';
-
 import '../../presentation/widgets/duration_chip.dart';
 
 /// The round settings screen.
@@ -79,10 +78,12 @@ class _RoundSettingsScreenState extends State<RoundSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     if (_isLoading) {
-      return const AppScaffold(
+      return AppScaffold(
         title: 'Round Settings',
-        body: Center(child: CircularProgressIndicator()),
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -90,19 +91,31 @@ class _RoundSettingsScreenState extends State<RoundSettingsScreen> {
       return AppScaffold(
         title: 'Round Settings',
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 48, color: Colors.red),
-              const SizedBox(height: 16),
-              Text('Failed to load settings'),
-              const SizedBox(height: 8),
-              Text(
-                _error!,
-                style: const TextStyle(fontSize: 12),
-                textAlign: TextAlign.center,
-              ),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.error_outline_rounded,
+                  size: 56,
+                  color: colorScheme.error,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Failed to load settings',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  _error!,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                AppButton(label: 'Try Again', onPressed: _initialize),
+              ],
+            ),
           ),
         ),
       );
@@ -111,24 +124,32 @@ class _RoundSettingsScreenState extends State<RoundSettingsScreen> {
     final selectedCategories = _selectedCategories;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: const Text('Round Settings'),
         centerTitle: true,
-        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Selected categories section
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+            // Selected Categories Card Container
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+                  width: 1.5,
+                ),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -136,55 +157,53 @@ class _RoundSettingsScreenState extends State<RoundSettingsScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Categories',
-                        style: Theme.of(context).textTheme.titleLarge
-                            ?.copyWith(fontWeight: FontWeight.w700),
+                        'Selected Categories',
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w800),
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
+                          horizontal: 10,
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary
-                              .withValues(alpha: 0.1),
+                          color: colorScheme.primary.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          '${selectedCategories.length} selected',
+                          '${selectedCategories.length} active',
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.w600,
+                            color: colorScheme.primary,
+                            fontWeight: FontWeight.bold,
                             fontSize: 12,
                           ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
                   SizedBox(
-                    height: 76,
+                    height: 84,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
                       itemCount: selectedCategories.length,
                       itemBuilder: (context, index) {
                         final category = selectedCategories[index];
+                        final catColor = categoryColor(category.id);
                         return Container(
-                          width: 116,
-                          margin: const EdgeInsets.only(right: 8),
+                          width: 110,
+                          margin: const EdgeInsets.only(right: 10),
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 8,
+                            horizontal: 8,
+                            vertical: 10,
                           ),
                           decoration: BoxDecoration(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .surfaceContainer,
-                            borderRadius: BorderRadius.circular(16),
+                            color: colorScheme.surface,
+                            borderRadius: BorderRadius.circular(18),
                             border: Border.all(
-                              color: Theme.of(context).colorScheme.primary
-                                  .withValues(alpha: 0.18),
+                              color: colorScheme.outlineVariant.withValues(
+                                alpha: 0.4,
+                              ),
                             ),
                           ),
                           child: Column(
@@ -192,17 +211,20 @@ class _RoundSettingsScreenState extends State<RoundSettingsScreen> {
                             children: [
                               Icon(
                                 categoryIcon(category.id),
-                                color: categoryColor(category.id),
+                                color: catColor,
                                 size: 24,
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: 6),
                               Text(
                                 category.name,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.labelMedium
-                                    ?.copyWith(fontWeight: FontWeight.w700),
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      color: colorScheme.onSurface,
+                                    ),
                               ),
                             ],
                           ),
@@ -214,48 +236,68 @@ class _RoundSettingsScreenState extends State<RoundSettingsScreen> {
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 28),
 
-            // Duration section
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Round Duration',
-                    style: Theme.of(context).textTheme.titleLarge
-                        ?.copyWith(fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    children: AppConstants.roundDurations.map((seconds) {
-                      return DurationChip(
-                        seconds: seconds,
-                        isSelected: _selectedDuration == seconds,
-                        onTap: () => _toggleDuration(seconds),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '${_selectedDuration ~/ 60 == 1 ? '1 minute' : '$_selectedDuration seconds'} per round',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
+            // Round Duration Section
+            Text(
+              'Round Duration',
+              style: Theme.of(context).textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w800),
             ),
-
-            // Start button
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: AppButton(label: 'Start Game', onPressed: _startGame),
+            const SizedBox(height: 6),
+            Text(
+              'Select how long your guessing session will run.',
+              style: Theme.of(context).textTheme.bodyMedium
+                  ?.copyWith(color: colorScheme.onSurfaceVariant),
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: AppConstants.roundDurations.map((seconds) {
+                return DurationChip(
+                  seconds: seconds,
+                  isSelected: _selectedDuration == seconds,
+                  onTap: () => _toggleDuration(seconds),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Icon(
+                  Icons.timer_outlined,
+                  size: 16,
+                  color: colorScheme.primary,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  '${_selectedDuration ~/ 60 == 1 ? '1 minute' : '$_selectedDuration seconds'} per round',
+                  style: TextStyle(
+                    color: colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
+                ),
+              ],
             ),
           ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: colorScheme.surface,
+          border: Border(
+            top: BorderSide(
+              color: colorScheme.outlineVariant.withValues(alpha: 0.4),
+            ),
+          ),
+        ),
+        child: AppButton(
+          label: 'START GAME',
+          prominent: true,
+          onPressed: _startGame,
         ),
       ),
     );

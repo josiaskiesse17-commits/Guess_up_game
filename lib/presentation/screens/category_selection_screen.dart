@@ -10,9 +10,7 @@ import '../../presentation/widgets/category_card.dart';
 
 /// The category selection screen.
 ///
-/// Displays all available categories in a grid. Players can select one or
-/// more categories; the selected count is shown and the Continue button is
-/// disabled until at least one category is chosen.
+/// Displays all available categories in a grid with custom surface layering.
 class CategorySelectionScreen extends StatefulWidget {
   const CategorySelectionScreen({super.key});
 
@@ -37,9 +35,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
     try {
       await _repository.load();
       if (!mounted) return;
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -66,6 +62,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     if (_isLoading) {
       return AppScaffold(
         title: 'Categories',
@@ -77,21 +75,31 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
       return AppScaffold(
         title: 'Categories',
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 48, color: Colors.red),
-              const SizedBox(height: 16),
-              Text('Failed to load categories'),
-              const SizedBox(height: 8),
-              Text(
-                _error!,
-                style: const TextStyle(fontSize: 12),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              AppButton(label: 'Try Again', onPressed: _loadCategories),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.error_outline_rounded,
+                  size: 56,
+                  color: colorScheme.error,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Failed to load categories',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  _error!,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                AppButton(label: 'Try Again', onPressed: _loadCategories),
+              ],
+            ),
           ),
         ),
       );
@@ -101,94 +109,90 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
     final selectedCount = _selectedIds.length;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: const Text('Categories'),
         centerTitle: true,
-        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           if (selectedCount > 0)
-            TextButton(onPressed: _continue, child: const Text('Continue')),
+            TextButton(
+              onPressed: _continue,
+              child: Text(
+                'Continue',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.primary,
+                ),
+              ),
+            ),
         ],
       ),
       body: Column(
         children: [
-          // Selection counter
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Theme.of(context).colorScheme.primary,
-                  Theme.of(context).colorScheme.secondary,
-                ],
-              ),
-              borderRadius: const BorderRadius.vertical(
-                bottom: Radius.circular(24),
+              color: colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: colorScheme.outlineVariant.withValues(alpha: 0.5),
               ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Build your round',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                  ),
+                  style: Theme.of(context).textTheme.titleLarge
+                      ?.copyWith(fontWeight: FontWeight.w900),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Pick one or mix categories for a surprise challenge.',
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.85),
-                    fontSize: 14,
-                  ),
+                  'Pick one or mix multiple categories for a challenge.',
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.category_rounded,
+                        size: 16,
+                        color: colorScheme.primary,
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.18),
-                        borderRadius: BorderRadius.circular(20),
+                      const SizedBox(width: 8),
+                      Text(
+                        '$selectedCount category${selectedCount == 1 ? '' : 's'} selected',
+                        style: TextStyle(
+                          color: colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.category, size: 16, color: Colors.white),
-                          const SizedBox(width: 8),
-                          Text(
-                            '$selectedCount category'
-                            '${selectedCount == 1 ? '' : 's'} selected',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
-
-          // Category grid
           Expanded(
             child: GridView.builder(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                 maxCrossAxisExtent: 220,
                 childAspectRatio: 0.9,
@@ -211,9 +215,19 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
       ),
       bottomNavigationBar: selectedCount > 0
           ? Container(
-              padding: const EdgeInsets.all(16),
-              color: Colors.white,
-              child: AppButton(label: 'Continue', onPressed: _continue),
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: colorScheme.surface,
+                border: Border(
+                  top: BorderSide(
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.4),
+                  ),
+                ),
+              ),
+              child: AppButton(
+                label: 'CONTINUE ($selectedCount)',
+                onPressed: _continue,
+              ),
             )
           : null,
     );
