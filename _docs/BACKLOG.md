@@ -166,52 +166,52 @@ Initial target: 50–100 words per category.
 
 ## B3.1 — Implement word-pool generation
 
-- [ ] Accept one or more selected category identifiers.
-- [ ] Retrieve words from the selected categories.
-- [ ] Combine all selected words into one collection.
-- [ ] Remove duplicate words.
-- [ ] Preserve original display text.
-- [ ] Normalize comparison values for deduplication.
-- [ ] Shuffle the resulting collection.
+- [x] Accept one or more selected category identifiers.
+- [x] Retrieve words from the selected categories.
+- [x] Combine all selected words into one collection.
+- [x] Remove duplicate words.
+- [x] Preserve original display text.
+- [x] Normalize comparison values for deduplication.
+- [x] Shuffle the resulting collection.
 
 **Acceptance criteria:**
 
-- One selected category produces its own word pool.
-- Multiple selected categories produce one unified pool.
-- No word is duplicated in the resulting pool.
-- There is no forced category alternation.
-- Words are selected randomly.
+- [x] One selected category produces its own word pool.
+- [x] Multiple selected categories produce one unified pool.
+- [x] No word is duplicated in the resulting pool.
+- [x] There is no forced category alternation.
+- [x] Words are selected randomly.
 
 ## B3.2 — Implement word progression
 
-- [ ] Display the current word.
-- [ ] Implement Correct.
-- [ ] Implement Skip.
-- [ ] Advance to the next word after either action.
-- [ ] Prevent double registration.
-- [ ] Prevent immediate repetition.
-- [ ] Handle pool exhaustion safely.
+- [x] Display the current word.
+- [x] Implement Correct.
+- [x] Implement Skip.
+- [x] Advance to the next word after either action.
+- [x] Prevent double registration.
+- [x] Prevent immediate repetition.
+- [x] Handle pool exhaustion safely.
 
 **Acceptance criteria:**
 
-- Every word is counted at most once.
-- Correct and Skip both advance gameplay.
-- Words do not immediately repeat.
-- An exhausted pool is reshuffled without breaking the session.
+- [x] Every word is counted at most once.
+- [x] Correct and Skip both advance gameplay.
+- [x] Words do not immediately repeat.
+- [x] An exhausted pool is reshuffled without breaking the session.
 
 ## B3.3 — Implement scoring
 
-- [ ] Track correct answers.
-- [ ] Track skipped words.
-- [ ] Calculate final score.
-- [ ] Ensure each word contributes only once.
-- [ ] Reset scoring when starting a new round.
+- [x] Track correct answers.
+- [x] Track skipped words.
+- [x] Calculate final score.
+- [x] Ensure each word contributes only once.
+- [x] Reset scoring when starting a new round.
 
 **Acceptance criteria:**
 
-- Score always matches recorded answers.
-- Skipped words do not increase the score.
-- New sessions do not inherit previous scores.
+- [x] Score always matches recorded answers.
+- [x] Skipped words do not increase the score.
+- [x] New sessions do not inherit previous scores.
 
 ---
 
