@@ -275,88 +275,88 @@ Initial target: 50–100 words per category.
 
 ## B5.1 — Implement results screen
 
-- [ ] Display final score.
-- [ ] Display correct answers.
-- [ ] Display skipped answers.
-- [ ] Display round duration.
-- [ ] Add replay action.
-- [ ] Add return-to-categories action.
-- [ ] Add return-to-home action.
+- [x] Display final score.
+- [x] Display correct answers.
+- [x] Display skipped answers.
+- [x] Display round duration.
+- [x] Add replay action.
+- [x] Add return-to-categories action.
+- [x] Add return-to-home action.
 
 **Acceptance criteria:**
 
-- Results accurately reflect the completed session.
-- Navigation works correctly.
-- No previous session data leaks into a new round.
+- [x] Results accurately reflect the completed session.
+- [x] Navigation works correctly.
+- [x] No previous session data leaks into a new round.
 
 ## B5.2 — Implement replay
 
-- [ ] Preserve the previous category selection.
-- [ ] Preserve the selected duration.
-- [ ] Create a fresh word pool.
-- [ ] Reset timer and score.
-- [ ] Start a new session.
+- [x] Preserve the previous category selection.
+- [x] Preserve the selected duration.
+- [x] Create a fresh word pool.
+- [x] Reset timer and score.
+- [x] Start a new session.
 
 **Acceptance criteria:**
 
-- Replay starts a genuinely new round.
-- Previous results remain unchanged.
-- Word repetition is avoided where possible.
+- [x] Replay starts a genuinely new round.
+- [x] Previous results remain unchanged.
+- [x] Word repetition is avoided where possible.
 
 ## B6.1 — Refine visual identity
 
-- [ ] Establish consistent typography.
-- [ ] Refine color palette.
-- [ ] Refine category cards.
-- [ ] Improve spacing and alignment.
-- [ ] Ensure appropriate contrast.
-- [ ] Add suitable icons.
-- [ ] Refine button styles.
+- [x] Establish consistent typography.
+- [x] Refine color palette.
+- [x] Refine category cards.
+- [x] Improve spacing and alignment.
+- [x] Ensure appropriate contrast.
+- [x] Add suitable icons.
+- [x] Refine button styles.
 
 ## B6.2 — Add interaction polish
 
-- [ ] Add smooth screen transitions.
-- [ ] Add category selection feedback.
-- [ ] Add correct/skip animations.
-- [ ] Add timer feedback.
-- [ ] Add suitable sound effects if approved.
-- [ ] Ensure animations never block gameplay.
+- [x] Add smooth screen transitions.
+- [x] Add category selection feedback.
+- [x] Add correct/skip animations.
+- [x] Add timer feedback.
+- [x] Add suitable sound effects if approved.
+- [x] Ensure animations never block gameplay.
 
 **Acceptance criteria:**
 
-- All screens share a consistent design language.
-- Animations remain lightweight.
-- The game remains responsive.
+- [x] All screens share a consistent design language.
+- [x] Animations remain lightweight.
+- [x] The game remains responsive.
 
 ## B7.1 — Test category data
 
-- [ ] Verify all 20 categories load.
-- [ ] Verify category identifiers are unique.
-- [ ] Verify word entries are valid.
-- [ ] Verify category word counts.
-- [ ] Check duplicates.
+- [x] Verify all 20 categories load.
+- [x] Verify category identifiers are unique.
+- [x] Verify word entries are valid.
+- [x] Verify category word counts.
+- [x] Check duplicates.
 
 ## B7.2 — Test category mixing
 
-- [ ] Test one selected category.
-- [ ] Test two selected categories.
-- [ ] Test several selected categories.
-- [ ] Test all 20 categories together.
-- [ ] Test overlapping words.
-- [ ] Verify unified random selection.
-- [ ] Verify no forced category alternation.
+- [x] Test one selected category.
+- [x] Test two selected categories.
+- [x] Test several selected categories.
+- [x] Test all 20 categories together.
+- [x] Test overlapping words.
+- [x] Verify unified random selection.
+- [x] Verify no forced category alternation.
 
 ## B7.3 — Test game mechanics
 
-- [ ] Test Correct.
-- [ ] Test Skip.
-- [ ] Test scoring.
-- [ ] Test all round durations.
-- [ ] Test timer expiration.
-- [ ] Test word-pool exhaustion.
-- [ ] Test replay.
-- [ ] Test screen navigation.
-- [ ] Test app interruption and resumption.
+- [x] Test Correct.
+- [x] Test Skip.
+- [x] Test scoring.
+- [x] Test all round durations.
+- [x] Test timer expiration.
+- [x] Test word-pool exhaustion.
+- [x] Test replay.
+- [x] Test screen navigation.
+- [x] Test app interruption and resumption.
 
 ## B7.4 — Test physical device behavior
 
@@ -369,42 +369,42 @@ Initial target: 50–100 words per category.
 
 ## B7.5 — Test offline operation
 
-- [ ] Launch without internet.
-- [ ] Navigate through all screens.
-- [ ] Start a game.
-- [ ] Complete a game.
-- [ ] Replay.
+- [x] Launch without internet.
+- [x] Navigate through all screens.
+- [x] Start a game.
+- [x] Complete a game.
+- [x] Replay.
 
 **Acceptance criteria:**
 
-- All critical game flows work without internet.
-- No unexpected crashes occur.
-- No critical scoring or timer defects remain.
+- [x] All critical game flows work without internet.
+- [x] No unexpected crashes occur.
+- [x] No critical scoring or timer defects remain.
 
 ## B8.1 — Prepare Android configuration
 
-- [ ] Verify application identifier.
-- [ ] Verify application name.
-- [ ] Configure application icon.
-- [ ] Verify Android permissions.
-- [ ] Ensure unnecessary permissions are absent.
-- [ ] Verify minimum Android compatibility.
+- [x] Verify application identifier.
+- [x] Verify application name.
+- [x] Configure application icon.
+- [x] Verify Android permissions.
+- [x] Ensure unnecessary permissions are absent.
+- [x] Verify minimum Android compatibility.
 
 ## B8.2 — Prepare release build
 
-- [ ] Verify build configuration.
-- [ ] Generate an Android APK.
-- [ ] Verify installation.
-- [ ] Test the installed release build.
-- [ ] Verify offline operation in release mode.
+- [x] Verify build configuration.
+- [x] Generate an Android APK.
+- [x] Verify installation.
+- [x] Test the installed release build.
+- [x] Verify offline operation in release mode.
 
 ## B8.3 — Final delivery
 
-- [ ] Confirm all acceptance criteria.
-- [ ] Document known limitations.
-- [ ] Document build instructions.
-- [ ] Document how to add new categories and words.
-- [ ] Provide final project summary.
+- [x] Confirm all acceptance criteria.
+- [x] Document known limitations.
+- [x] Document build instructions.
+- [x] Document how to add new categories and words.
+- [x] Provide final project summary.
 
 **Final milestone acceptance criteria:**
 

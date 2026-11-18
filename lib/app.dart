@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'core/constants/app_constants.dart';
 import 'core/theme/app_theme.dart';
 import 'game/models/game_config.dart';
+import 'game/models/game_result.dart';
 import 'presentation/screens/category_selection_screen.dart';
 import 'presentation/screens/gameplay_screen.dart';
 import 'presentation/screens/home_screen.dart';
+import 'presentation/screens/results_screen.dart';
 import 'presentation/screens/round_settings_screen.dart';
 
 /// Application root.
@@ -43,8 +45,10 @@ class App extends StatelessWidget {
           settings: settings,
         );
       case AppRoutes.results:
+        final result = settings.arguments as GameResult?;
+        if (result == null) return null;
         return MaterialPageRoute(
-          builder: (_) => const ResultsPlaceholder(),
+          builder: (_) => ResultsScreen(result: result),
           settings: settings,
         );
       default:
@@ -64,16 +68,3 @@ class App extends StatelessWidget {
 }
 
 /// Placeholder results screen (real UI implemented in Milestone 5).
-class ResultsPlaceholder extends StatelessWidget {
-  const ResultsPlaceholder({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Results'), centerTitle: true),
-      body: const Center(
-        child: Text('Results screen — implemented in Milestone 5'),
-      ),
-    );
-  }
-}

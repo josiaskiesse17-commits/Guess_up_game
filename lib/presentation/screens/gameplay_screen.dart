@@ -7,6 +7,7 @@ import '../../data/repositories/category_repository.dart';
 import '../../game/controllers/game_controller.dart';
 import '../../game/controllers/game_timer.dart';
 import '../../game/models/game_config.dart';
+import '../../game/models/game_result.dart';
 import '../../game/models/game_session.dart';
 import '../../game/models/session_status.dart';
 import '../../game/services/pool_generator.dart';
@@ -93,11 +94,15 @@ class _GameplayScreenState extends State<GameplayScreen>
 
     Future.delayed(const Duration(seconds: 1), () {
       if (mounted) {
-        Navigator.pushReplacementNamed(
-          context,
-          AppRoutes.results,
-          arguments: _controller.session,
-        );
+        final session = _controller.session;
+        final config = _controller.config;
+        if (session != null) {
+          Navigator.pushReplacementNamed(
+            context,
+            AppRoutes.results,
+            arguments: GameResult.fromSession(session, config),
+          );
+        }
       }
     });
   }
@@ -242,23 +247,32 @@ class _GameplayScreenState extends State<GameplayScreen>
   }
 
   Widget _buildTimerChip(int minutes, int seconds) {
+    final remaining = minutes * 60 + seconds;
+    final isLow = remaining <= 10;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
+        color: Colors.white.withOpacity(isLow ? 0.3 : 0.2),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withOpacity(0.4),
+          color: isLow
+              ? Colors.redAccent.withOpacity(0.8)
+              : Colors.white.withOpacity(0.4),
           width: 2,
         ),
       ),
-      child: Text(
-        '$minutes:${seconds.toString().padLeft(2, '0')}',
-        style: const TextStyle(
-          color: Colors.white,
+      child: AnimatedDefaultTextStyle(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        style: TextStyle(
+          color: isLow ? Colors.redAccent : Colors.white,
           fontSize: 32,
           fontWeight: FontWeight.w800,
           letterSpacing: -1,
+        ),
+        child: Text(
+          '$minutes:${seconds.toString().padLeft(2, '0')}',
         ),
       ),
     );
