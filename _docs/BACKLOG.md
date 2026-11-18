@@ -118,47 +118,47 @@ Initial target: 50–100 words per category.
 
 ## B2.1 — Implement the home screen
 
-- [ ] Create the application home screen.
-- [ ] Add application branding.
-- [ ] Add a prominent Play action.
-- [ ] Add navigation to the game flow.
+- [x] Create the application home screen.
+- [x] Add application branding.
+- [x] Add a prominent Play action.
+- [x] Add navigation to the game flow.
 
 **Acceptance criteria:**
 
-- Home screen is visually polished.
-- Navigation works correctly.
+- [x] Home screen is visually polished.
+- [x] Navigation works correctly.
 
 ## B2.2 — Implement category selection
 
-- [ ] Display all 20 categories.
-- [ ] Create category cards.
-- [ ] Add selected/unselected visual states.
-- [ ] Support single-category selection.
-- [ ] Support multiple-category selection.
-- [ ] Display the number of selected categories.
-- [ ] Implement select/deselect behavior.
-- [ ] Prevent continuing with no selection.
+- [x] Display all 20 categories.
+- [x] Create category cards.
+- [x] Add selected/unselected visual states.
+- [x] Support single-category selection.
+- [x] Support multiple-category selection.
+- [x] Display the number of selected categories.
+- [x] Implement select/deselect behavior.
+- [x] Prevent continuing with no selection.
 
 **Acceptance criteria:**
 
-- Every category can be selected.
-- Multiple selections work.
-- Selection state is consistent.
-- The screen remains usable with all 20 categories displayed.
+- [x] Every category can be selected.
+- [x] Multiple selections work.
+- [x] Selection state is consistent.
+- [x] The screen remains usable with all 20 categories displayed.
 
 ## B2.3 — Implement round settings
 
-- [ ] Add 30-second duration.
-- [ ] Add 60-second duration.
-- [ ] Add 90-second duration.
-- [ ] Add 120-second duration.
-- [ ] Display the selected categories.
-- [ ] Add a Start Game action.
+- [x] Add 30-second duration.
+- [x] Add 60-second duration.
+- [x] Add 90-second duration.
+- [x] Add 120-second duration.
+- [x] Display the selected categories.
+- [x] Add a Start Game action.
 
 **Acceptance criteria:**
 
-- Only supported durations can be selected.
-- The selected duration is passed correctly into the game session.
+- [x] Only supported durations can be selected.
+- [x] The selected duration is passed correctly into the game session.
 
 ---
 
