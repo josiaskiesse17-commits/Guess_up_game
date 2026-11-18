@@ -42,7 +42,10 @@ class CategoryCard extends StatelessWidget {
                     ? LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: [color.withValues(alpha: 0.22), Colors.white],
+                        colors: [
+                          color.withValues(alpha: 0.22),
+                          theme.colorScheme.surfaceContainerHighest,
+                        ],
                       )
                     : null,
                 color: isSelected ? null : theme.colorScheme.surface,

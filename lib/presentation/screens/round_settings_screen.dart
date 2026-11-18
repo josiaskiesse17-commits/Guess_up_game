@@ -178,7 +178,9 @@ class _RoundSettingsScreenState extends State<RoundSettingsScreen> {
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainer,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
                               color: Theme.of(context).colorScheme.primary
@@ -199,10 +201,8 @@ class _RoundSettingsScreenState extends State<RoundSettingsScreen> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                ),
+                                style: Theme.of(context).textTheme.labelMedium
+                                    ?.copyWith(fontWeight: FontWeight.w700),
                               ),
                             ],
                           ),

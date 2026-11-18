@@ -407,6 +407,7 @@ class _GameplayScreenState extends State<GameplayScreen>
   }
 
   Widget _buildWordDisplay(String word) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       constraints: BoxConstraints(
         maxWidth: MediaQuery.sizeOf(context).width - 32,
@@ -414,7 +415,7 @@ class _GameplayScreenState extends State<GameplayScreen>
       ),
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -428,10 +429,10 @@ class _GameplayScreenState extends State<GameplayScreen>
         fit: BoxFit.scaleDown,
         child: Text(
           word,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 64,
             fontWeight: FontWeight.w800,
-            color: Color(0xFF6D4C41),
+            color: colorScheme.onSurface,
             letterSpacing: -2,
           ),
           textAlign: TextAlign.center,

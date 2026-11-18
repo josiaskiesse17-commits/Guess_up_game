@@ -2,14 +2,14 @@
 // ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 
-/// Primary seed color — a warm terracotta that feels energetic and playful.
-const Color _seedColor = Color(0xFF6D4C41);
+/// Primary seed color — a vivid indigo that remains legible in both themes.
+const Color _seedColor = Color(0xFF5967E8);
 
-/// Secondary accent — a vibrant teal for highlights and selected states.
-const Color _secondaryColor = Color(0xFF00ACC1);
+/// Secondary accent — a bright mint used for energy and positive feedback.
+const Color _secondaryColor = Color(0xFF35D0BA);
 
 /// Surface color for cards and containers.
-const Color _surfaceColor = Color(0xFFF9F5F0);
+const Color _surfaceColor = Color(0xFFF6F7FB);
 
 /// Error/danger color for disabled states.
 const Color _errorColor = Color(0xFFD32F2F);
@@ -23,6 +23,7 @@ final ThemeData appTheme = ThemeData(
     surface: _surfaceColor,
     error: _errorColor,
   ),
+  scaffoldBackgroundColor: _surfaceColor,
   textTheme: const TextTheme(
     displayLarge: TextStyle(
       fontSize: 40,
@@ -76,16 +77,19 @@ final ThemeData appTheme = ThemeData(
 final ThemeData darkAppTheme = appTheme.copyWith(
   brightness: Brightness.dark,
   colorScheme: ColorScheme.fromSeed(
-    seedColor: _seedColor,
+    seedColor: const Color(0xFF9BA5FF),
     brightness: Brightness.dark,
-    secondary: _secondaryColor,
-    surface: const Color(0xFF171417),
+    secondary: const Color(0xFF62E6D0),
+    surface: const Color(0xFF0D111A),
     error: const Color(0xFFFF8A80),
   ),
-  scaffoldBackgroundColor: const Color(0xFF171417),
-  cardTheme: appTheme.cardTheme.copyWith(color: const Color(0xFF241F24)),
+  scaffoldBackgroundColor: const Color(0xFF0D111A),
+  cardTheme: appTheme.cardTheme.copyWith(
+    color: const Color(0xFF171E2B),
+    elevation: 0,
+  ),
   inputDecorationTheme: appTheme.inputDecorationTheme.copyWith(
-    fillColor: const Color(0xFF241F24),
+    fillColor: const Color(0xFF171E2B),
   ),
 );
 

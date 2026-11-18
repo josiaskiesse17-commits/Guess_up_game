@@ -38,17 +38,21 @@ class DurationChip extends StatelessWidget {
       label: Text(
         _label,
         style: theme.textTheme.labelLarge?.copyWith(
-          color: isSelected ? Colors.white : theme.colorScheme.onSurface,
+          color: isSelected
+              ? theme.colorScheme.onPrimary
+              : theme.colorScheme.onSurface,
           fontWeight: FontWeight.w600,
         ),
       ),
       selectedColor: AppConstants.defaultDurationSeconds == seconds
           ? theme.colorScheme.primary
           : theme.colorScheme.primary,
-      checkmarkColor: Colors.white,
-      backgroundColor: Colors.white,
+      checkmarkColor: theme.colorScheme.onPrimary,
+      backgroundColor: theme.colorScheme.surfaceContainer,
       side: BorderSide(
-        color: isSelected ? theme.colorScheme.primary : Colors.grey.shade300,
+        color: isSelected
+            ? theme.colorScheme.primary
+            : theme.colorScheme.outlineVariant,
         width: isSelected ? 2 : 1,
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

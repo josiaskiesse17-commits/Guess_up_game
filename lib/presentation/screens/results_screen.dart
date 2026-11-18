@@ -151,10 +151,10 @@ class ResultsScreen extends StatelessWidget {
           // Big score number
           Text(
             '${result.correct}',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 72,
               fontWeight: FontWeight.w900,
-              color: Color(0xFF6D4C41),
+              color: colorScheme.primary,
               letterSpacing: -2,
             ),
           ),
@@ -171,6 +171,7 @@ class ResultsScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _buildDetailItem(
+                context,
                 '${result.skipped}',
                 'Skipped',
                 Icons.skip_next,
@@ -183,6 +184,7 @@ class ResultsScreen extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(vertical: 4),
               ),
               _buildDetailItem(
+                context,
                 '${result.durationSeconds}s',
                 'Duration',
                 Icons.access_time,
@@ -230,6 +232,7 @@ class ResultsScreen extends StatelessWidget {
   }
 
   Widget _buildDetailItem(
+    BuildContext context,
     String value,
     String label,
     IconData icon,
@@ -242,10 +245,10 @@ class ResultsScreen extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w800,
-            color: Color(0xFF6D4C41),
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
         const SizedBox(height: 4),
@@ -253,7 +256,7 @@ class ResultsScreen extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.grey.shade600,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -328,7 +331,7 @@ class ResultsScreen extends StatelessWidget {
             value,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w800,
-              color: const Color(0xFF6D4C41),
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ],
@@ -393,10 +396,12 @@ class ResultsScreen extends StatelessWidget {
             );
           },
           style: OutlinedButton.styleFrom(
-            foregroundColor: Colors.grey.shade600,
+            foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
             minimumSize: const Size(double.infinity, 52),
             padding: const EdgeInsets.symmetric(vertical: 16),
-            side: BorderSide(color: Colors.grey.shade300),
+            side: BorderSide(
+              color: Theme.of(context).colorScheme.outlineVariant,
+            ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
