@@ -17,21 +17,21 @@ This backlog defines the complete implementation sequence, from initial reposito
 
 ## B0.1 — Inspect the existing repository
 
-- [ ] Inspect the Flutter project structure.
-- [ ] Read `pubspec.yaml`.
-- [ ] Identify the Flutter and Dart SDK constraints.
-- [ ] Identify existing dependencies.
-- [ ] Inspect the current application entry point.
-- [ ] Identify existing navigation and state management.
-- [ ] Inspect existing theme and design conventions.
-- [ ] Identify existing tests and Android configuration.
+- [x] Inspect the Flutter project structure.
+- [x] Read `pubspec.yaml`.
+- [x] Identify the Flutter and Dart SDK constraints.
+- [x] Identify existing dependencies.
+- [x] Inspect the current application entry point.
+- [x] Identify existing navigation and state management.
+- [x] Inspect existing theme and design conventions.
+- [x] Identify existing tests and Android configuration.
 
 **Acceptance criteria:**
 
-- The agent understands the existing project.
-- Existing architecture is documented.
-- No existing functionality has been unnecessarily modified.
-- A proposed minimal implementation approach is presented before major changes.
+- [x] The agent understands the existing project.
+- [x] Existing architecture is documented.
+- [x] No existing functionality has been unnecessarily modified.
+- [x] A proposed minimal implementation approach is presented before major changes.
 
 ## B0.2 — Establish implementation architecture
 
@@ -81,36 +81,36 @@ This backlog defines the complete implementation sequence, from initial reposito
 
 ## B1.3 — Populate the 20 initial categories
 
-- [ ] Movies & TV.
-- [ ] Video Games.
-- [ ] Animals.
-- [ ] Sports.
-- [ ] Celebrities.
-- [ ] Music.
-- [ ] Geography.
-- [ ] Science.
-- [ ] Technology.
-- [ ] Food & Drinks.
-- [ ] History.
-- [ ] Anime & Manga.
-- [ ] African Culture.
-- [ ] General Knowledge.
-- [ ] Programming.
-- [ ] Vehicles.
-- [ ] Superheroes.
-- [ ] Professions.
-- [ ] Everyday Objects.
-- [ ] Expressions & Slang.
+- [x] Movies & TV.
+- [x] Video Games.
+- [x] Animals.
+- [x] Sports.
+- [x] Celebrities.
+- [x] Music.
+- [x] Geography.
+- [x] Science.
+- [x] Technology.
+- [x] Food & Drinks.
+- [x] History.
+- [x] Anime & Manga.
+- [x] African Culture.
+- [x] General Knowledge.
+- [x] Programming.
+- [x] Vehicles.
+- [x] Superheroes.
+- [x] Professions.
+- [x] Everyday Objects.
+- [x] Expressions & Slang.
 
 Initial target: 50–100 words per category.
 
 **Acceptance criteria:**
 
-- All 20 categories are present.
-- Words are relevant and recognizable.
-- Entries are free of avoidable duplicates.
-- No fabricated factual entities are included.
-- Category counts can be verified.
+- [x] All 20 categories are present.
+- [x] Words are relevant and recognizable.
+- [x] Entries are free of avoidable duplicates.
+- [x] No fabricated factual entities are included.
+- [x] Category counts can be verified.
 
 ---
 
