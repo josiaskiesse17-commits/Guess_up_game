@@ -38,6 +38,7 @@ class _GameplayScreenState extends State<GameplayScreen>
   String? _preparationError;
   int _countdownValue = 3;
   Timer? _countdownTimer;
+  bool _roundCompleteHandled = false;
 
   @override
   void initState() {
@@ -92,6 +93,7 @@ class _GameplayScreenState extends State<GameplayScreen>
   }
 
   void _onStateChanged() {
+    if (_roundCompleteHandled) return;
     final state = _controller.state.value;
     if (state.status == SessionStatus.completed) {
       _handleRoundComplete();
@@ -115,12 +117,16 @@ class _GameplayScreenState extends State<GameplayScreen>
   }
 
   void _handleRoundComplete() {
+    _roundCompleteHandled = true;
     final session = _controller.session;
     final config = _controller.config;
     _countdownTimer?.cancel();
     _controller.state.removeListener(_onStateChanged);
     WidgetsBinding.instance.removeObserver(this);
-    _controller.dispose();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _controller.dispose();
+    });
 
     Future.delayed(const Duration(milliseconds: 600), () {
       if (mounted && session != null) {

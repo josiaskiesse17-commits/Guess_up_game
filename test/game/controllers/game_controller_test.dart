@@ -243,4 +243,20 @@ void main() {
 
     expect(controller.timer!.isRunning, false);
   });
+
+  test('dispose is safe to call more than once', () async {
+    final repo = _repoWithCategories();
+    final controller = GameController(
+      repository: repo,
+      poolGenerator: PoolGenerator(),
+      sensor: FakeTiltSensor(),
+      config: GameConfig(categoryIds: ['c1'], durationSeconds: 60),
+    );
+
+    await controller.startGame();
+    controller.dispose();
+    controller.dispose();
+
+    expect(controller.timer!.isRunning, false);
+  });
 }

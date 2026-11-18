@@ -54,6 +54,7 @@ class GameController {
   GameSession? _session;
   GameTimer? _timer;
   StreamSubscription<int>? _timerSubscription;
+  bool _disposed = false;
 
   /// Current session state exposed to the UI.
   final ValueNotifier<GameSessionState> state = ValueNotifier(
@@ -175,6 +176,8 @@ class GameController {
   }
 
   void dispose() {
+    if (_disposed) return;
+    _disposed = true;
     _timerSubscription?.cancel();
     _timer?.dispose();
     _sensor.dispose();
