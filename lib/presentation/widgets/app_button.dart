@@ -9,12 +9,14 @@ class AppButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
   final bool enabled;
+  final bool prominent;
 
   const AppButton({
     super.key,
     required this.label,
     required this.onPressed,
     this.enabled = true,
+    this.prominent = false,
   });
 
   @override
@@ -24,15 +26,19 @@ class AppButton extends StatelessWidget {
       style: FilledButton.styleFrom(
         backgroundColor: appTheme.colorScheme.primary,
         foregroundColor: appTheme.colorScheme.onPrimary,
-        minimumSize: const Size(double.infinity, 52),
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        minimumSize: const Size(double.infinity, 56),
+        padding: const EdgeInsets.symmetric(vertical: 18),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
         ),
       ),
       child: Text(
         label,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+        style: TextStyle(
+          fontSize: prominent ? 20 : 18,
+          fontWeight: FontWeight.w700,
+          letterSpacing: prominent ? 0.5 : 0,
+        ),
       ),
     );
   }

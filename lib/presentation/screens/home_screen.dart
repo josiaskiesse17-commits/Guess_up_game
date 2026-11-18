@@ -6,7 +6,8 @@ import '../../presentation/widgets/app_button.dart';
 /// The application home screen.
 ///
 /// Displays branding, a tagline, and a prominent Play action that navigates
-/// to the category selection screen.
+/// to the category selection screen. Uses [SingleChildScrollView] so the
+/// layout adapts to different screen sizes without bottom overflow.
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -29,59 +30,60 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         child: SafeArea(
-          child: Column(
-            children: [
-              const Spacer(flex: 2),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 24),
 
-              // Branding
-              Column(
-                children: [
-                  Container(
-                    width: 96,
-                    height: 96,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.4),
-                        width: 3,
+                // Branding
+                Column(
+                  children: [
+                    Container(
+                      width: 96,
+                      height: 96,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.4),
+                          width: 3,
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.games,
+                        color: Colors.white,
+                        size: 48,
                       ),
                     ),
-                    child: const Icon(
-                      Icons.games,
-                      color: Colors.white,
-                      size: 48,
+                    const SizedBox(height: 24),
+                    Text(
+                      AppConstants.appName,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 48,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -1.5,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    AppConstants.appName,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 48,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: -1.5,
+                    const SizedBox(height: 12),
+                    Text(
+                      'Guess the word before time runs out!',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.9),
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Guess the word before time runs out!',
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
+                  ],
+                ),
 
-              const Spacer(flex: 3),
+                const SizedBox(height: 64),
 
-              // Content card
-              Expanded(
-                child: Container(
+                // Content card
+                Container(
+                  width: double.infinity,
                   decoration: BoxDecoration(
                     color: colorScheme.surface,
                     borderRadius: const BorderRadius.only(
@@ -90,6 +92,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const SizedBox(height: 32),
                       Text(
@@ -100,26 +103,35 @@ class HomeScreen extends StatelessWidget {
                       Text(
                         'Pick your categories, set the round duration, and '
                         'start guessing.',
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge
+                            ?.copyWith(
                           color: colorScheme.onSurfaceVariant,
                         ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 40),
-                      AppButton(
-                        label: 'Play',
-                        onPressed: () {
-                          Navigator.of(context).pushNamed(
-                            AppRoutes.categorySelection,
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 20),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 40),
+                          child: AppButton(
+                            label: 'PLAY',
+                            prominent: true,
+                            onPressed: () {
+                              Navigator.of(context).pushNamed(
+                                AppRoutes.categorySelection,
+                              );
+                            },
+                          ),
+                        ),
+                      const SizedBox(height: 32),
                     ],
                   ),
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 40),
+              ],
+            ),
           ),
         ),
       ),
