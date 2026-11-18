@@ -14,6 +14,7 @@ import '../../game/models/game_session.dart';
 import '../../game/models/session_status.dart';
 import '../../game/services/pool_generator.dart';
 import '../../game/services/tilt_sensor.dart';
+import '../../game/services/game_audio.dart';
 import '../../presentation/widgets/app_button.dart';
 
 /// The main gameplay screen with optimized game loop and tilt feedback.
@@ -30,6 +31,8 @@ class _GameplayScreenState extends State<GameplayScreen>
     with WidgetsBindingObserver {
   late GameController _controller;
   late CategoryRepository _repository;
+  late GameAudio _audio;
+  bool? _wasLandscape;
   bool _countdownVisible = true;
   bool _isPreparing = true;
   String? _preparationError;
@@ -42,9 +45,12 @@ class _GameplayScreenState extends State<GameplayScreen>
     WidgetsBinding.instance.addObserver(this);
 
     _repository = CategoryRepository();
+    _audio = GameAudio();
     _controller = GameController(
       repository: _repository,
       poolGenerator: PoolGenerator(),
+      onCorrect: () => _audio.playCorrect(),
+      onSkip: () => _audio.playSkip(),
       sensor: TiltSensor(
         config: const TiltSensorConfig(
           correctThreshold: 15.0,
@@ -57,6 +63,17 @@ class _GameplayScreenState extends State<GameplayScreen>
 
     _controller.state.addListener(_onStateChanged);
     _prepareGame();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
+    if (_wasLandscape != null && _wasLandscape != isLandscape) {
+      _controller.recalibrateSensor();
+    }
+    _wasLandscape = isLandscape;
   }
 
   Future<void> _prepareGame() async {
@@ -138,6 +155,7 @@ class _GameplayScreenState extends State<GameplayScreen>
     _controller.state.removeListener(_onStateChanged);
     WidgetsBinding.instance.removeObserver(this);
     _controller.dispose();
+    _audio.dispose();
     super.dispose();
   }
 
@@ -230,6 +248,77 @@ class _GameplayScreenState extends State<GameplayScreen>
       builder: (context, state, child) {
         final session = state.session;
         final timer = state.timer;
+        final isLandscape =
+            MediaQuery.orientationOf(context) == Orientation.landscape;
+
+        if (isLandscape) {
+          return Column(
+            children: [
+              _buildHeader(state, timer, colorScheme),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (session?.currentWord != null)
+                              Expanded(
+                                child: Center(
+                                  child: _buildWordDisplay(
+                                    session!.currentWord!.text,
+                                    colorScheme,
+                                  ),
+                                ),
+                              )
+                            else
+                              const Spacer(),
+                            const SizedBox(height: 8),
+                            _buildTiltInstructions(colorScheme),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      SizedBox(
+                        width: 168,
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: AppButton(
+                                  label: 'CORRECT',
+                                  onPressed: () =>
+                                      _controller.registerCorrect(),
+                                  enabled:
+                                      state.status == SessionStatus.playing,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Expanded(
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: AppOutlineButton(
+                                  label: 'SKIP',
+                                  onPressed: () => _controller.registerSkip(),
+                                  enabled:
+                                      state.status == SessionStatus.playing,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
+        }
 
         return Column(
           children: [
@@ -360,29 +449,38 @@ class _GameplayScreenState extends State<GameplayScreen>
   }
 
   Widget _buildWordDisplay(String word, ColorScheme colorScheme) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(
-          color: colorScheme.outlineVariant.withValues(alpha: 0.6),
-          width: 1.5,
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
+
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 900),
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(
+          horizontal: 24,
+          vertical: isLandscape ? 16 : 48,
         ),
-      ),
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Text(
-          word,
-          style: TextStyle(
-            fontSize: 56,
-            fontWeight: FontWeight.w900,
-            color: colorScheme.onSurface,
-            letterSpacing: -1.5,
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.6),
+            width: 1.5,
           ),
-          textAlign: TextAlign.center,
-          maxLines: 2,
+        ),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            word,
+            style: TextStyle(
+              fontSize: 56,
+              fontWeight: FontWeight.w900,
+              color: colorScheme.onSurface,
+              letterSpacing: -1.5,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+          ),
         ),
       ),
     );

@@ -27,31 +27,30 @@ class FakeTiltSensor extends TiltSensor {
   void dispose() {}
 }
 
-List<Word> _words(List<Map<String, String>> entries) => entries
-    .map((e) => Word(id: e['id']!, text: e['text']!))
-    .toList();
+List<Word> _words(List<Map<String, String>> entries) =>
+    entries.map((e) => Word(id: e['id']!, text: e['text']!)).toList();
 
 CategoryRepository _repoWithCategories() => CategoryRepository.withData([
-      Category(
-        id: 'c1',
-        name: 'Animals',
-        icon: 'pets',
-        words: _words([
-          {'id': 'a1', 'text': 'Lion'},
-          {'id': 'a2', 'text': 'Tiger'},
-          {'id': 'a3', 'text': 'Bear'},
-        ]),
-      ),
-      Category(
-        id: 'c2',
-        name: 'Sports',
-        icon: 'sports',
-        words: _words([
-          {'id': 's1', 'text': 'Soccer'},
-          {'id': 's2', 'text': 'Tennis'},
-        ]),
-      ),
-    ]);
+  Category(
+    id: 'c1',
+    name: 'Animals',
+    icon: 'pets',
+    words: _words([
+      {'id': 'a1', 'text': 'Lion'},
+      {'id': 'a2', 'text': 'Tiger'},
+      {'id': 'a3', 'text': 'Bear'},
+    ]),
+  ),
+  Category(
+    id: 'c2',
+    name: 'Sports',
+    icon: 'sports',
+    words: _words([
+      {'id': 's1', 'text': 'Soccer'},
+      {'id': 's2', 'text': 'Tennis'},
+    ]),
+  ),
+]);
 
 void main() {
   test('GameController initializes with correct config and idle state', () {
@@ -137,6 +136,27 @@ void main() {
     expect(controller.session!.correct, 0);
     expect(controller.session!.skipped, 1);
     expect(controller.session!.answeredCount, 1);
+  });
+
+  test('register actions invoke their optional feedback callbacks', () async {
+    final repo = _repoWithCategories();
+    var correctCalls = 0;
+    var skipCalls = 0;
+    final controller = GameController(
+      repository: repo,
+      poolGenerator: PoolGenerator(),
+      sensor: FakeTiltSensor(),
+      config: GameConfig(categoryIds: ['c1'], durationSeconds: 60),
+      onCorrect: () => correctCalls++,
+      onSkip: () => skipCalls++,
+    );
+
+    await controller.startGame();
+    controller.registerCorrect();
+    controller.registerSkip();
+
+    expect(correctCalls, 1);
+    expect(skipCalls, 1);
   });
 
   test('replay creates a fresh session with same config', () async {

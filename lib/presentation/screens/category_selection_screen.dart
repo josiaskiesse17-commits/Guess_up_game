@@ -107,6 +107,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
 
     final categories = _repository.categories;
     final selectedCount = _selectedIds.length;
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -135,8 +137,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
         children: [
           Container(
             width: double.infinity,
-            margin: const EdgeInsets.all(16),
-            padding: const EdgeInsets.all(20),
+            margin: EdgeInsets.all(isLandscape ? 12 : 16),
+            padding: EdgeInsets.all(isLandscape ? 12 : 20),
             decoration: BoxDecoration(
               color: colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(24),
@@ -191,24 +193,36 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
             ),
           ),
           Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 220,
-                childAspectRatio: 0.9,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 960),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final maxCrossAxisExtent = constraints.maxWidth >= 800
+                        ? 210.0
+                        : 220.0;
+                    return GridView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: maxCrossAxisExtent,
+                        childAspectRatio: isLandscape ? 1.05 : 0.9,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                      ),
+                      itemCount: categories.length,
+                      itemBuilder: (context, index) {
+                        final category = categories[index];
+                        final isSelected = _selectedIds.contains(category.id);
+                        return CategoryCard(
+                          category: category,
+                          isSelected: isSelected,
+                          onTap: () => _toggleCategory(category.id),
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
-              itemCount: categories.length,
-              itemBuilder: (context, index) {
-                final category = categories[index];
-                final isSelected = _selectedIds.contains(category.id);
-                return CategoryCard(
-                  category: category,
-                  isSelected: isSelected,
-                  onTap: () => _toggleCategory(category.id),
-                );
-              },
             ),
           ),
         ],
@@ -224,9 +238,14 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                   ),
                 ),
               ),
-              child: AppButton(
-                label: 'CONTINUE ($selectedCount)',
-                onPressed: _continue,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 760),
+                  child: AppButton(
+                    label: 'CONTINUE ($selectedCount)',
+                    onPressed: _continue,
+                  ),
+                ),
               ),
             )
           : null,

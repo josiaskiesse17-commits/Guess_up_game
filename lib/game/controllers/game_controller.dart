@@ -48,6 +48,8 @@ class GameController {
   final PoolGenerator _poolGenerator;
   final TiltSensor _sensor;
   final GameConfig _config;
+  final VoidCallback? onCorrect;
+  final VoidCallback? onSkip;
 
   GameSession? _session;
   GameTimer? _timer;
@@ -68,6 +70,8 @@ class GameController {
     required this._poolGenerator,
     required this._sensor,
     required this._config,
+    this.onCorrect,
+    this.onSkip,
   });
 
   /// Begin a round with the current configuration.
@@ -106,6 +110,7 @@ class GameController {
     final session = _session;
     if (session == null || !session.isPlaying) return;
     session.registerCorrect();
+    onCorrect?.call();
     _notify();
   }
 
@@ -114,6 +119,7 @@ class GameController {
     final session = _session;
     if (session == null || !session.isPlaying) return;
     session.registerSkip();
+    onSkip?.call();
     _notify();
   }
 
@@ -143,6 +149,16 @@ class GameController {
         onSkip: (_) => registerSkip(),
       );
     }
+  }
+
+  /// Recalibrate tilt detection after the device orientation changes.
+  void recalibrateSensor() {
+    if (_session == null || !_session!.isPlaying) return;
+    _sensor.stop();
+    _sensor.start(
+      onCorrect: (_) => registerCorrect(),
+      onSkip: (_) => registerSkip(),
+    );
   }
 
   /// Replay: preserve [config], create a fresh session and fresh shuffled pool.

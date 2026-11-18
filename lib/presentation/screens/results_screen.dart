@@ -25,89 +25,99 @@ class ResultsScreen extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-          child: Column(
-            children: [
-              const SizedBox(height: 16),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 760),
+              child: Column(
+                children: [
+                  const SizedBox(height: 16),
 
-              // Trophy Header Icon
-              Container(
-                width: 88,
-                height: 88,
-                decoration: BoxDecoration(
-                  color: colorScheme.primaryContainer.withValues(alpha: 0.6),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: colorScheme.primary.withValues(alpha: 0.3),
-                    width: 2,
+                  // Trophy Header Icon
+                  Container(
+                    width: 88,
+                    height: 88,
+                    decoration: BoxDecoration(
+                      color: colorScheme.primaryContainer.withValues(
+                        alpha: 0.6,
+                      ),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: colorScheme.primary.withValues(alpha: 0.3),
+                        width: 2,
+                      ),
+                    ),
+                    child: Icon(
+                      Icons.emoji_events_rounded,
+                      color: colorScheme.primary,
+                      size: 44,
+                    ),
                   ),
-                ),
-                child: Icon(
-                  Icons.emoji_events_rounded,
-                  color: colorScheme.primary,
-                  size: 44,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Round Complete!',
-                style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: -1.0,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Here is how your session went',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                ),
-                textAlign: TextAlign.center,
-              ),
-
-              const SizedBox(height: 32),
-
-              // Main Score Card
-              _buildScoreCard(context),
-
-              const SizedBox(height: 24),
-
-              // Detailed breakdown list card
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(
-                    color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-                    width: 1.2,
+                  const SizedBox(height: 20),
+                  Text(
+                    'Round Complete!',
+                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -1.0,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                ),
-                child: _buildDetailsRow(context),
-              ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Here is how your session went',
+                    style: Theme.of(context).textTheme.bodyLarge
+                        ?.copyWith(color: colorScheme.onSurfaceVariant),
+                    textAlign: TextAlign.center,
+                  ),
 
-              const SizedBox(height: 36),
+                  const SizedBox(height: 32),
 
-              // Action Buttons
-              AppButton(
-                label: 'PLAY AGAIN',
-                prominent: true,
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
+                  // Main Score Card
+                  _buildScoreCard(context),
+
+                  const SizedBox(height: 24),
+
+                  // Detailed breakdown list card
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                      color: colorScheme.surfaceContainerHighest.withValues(
+                        alpha: 0.4,
+                      ),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(
+                        color: colorScheme.outlineVariant.withValues(
+                          alpha: 0.5,
+                        ),
+                        width: 1.2,
+                      ),
+                    ),
+                    child: _buildDetailsRow(context),
+                  ),
+
+                  const SizedBox(height: 36),
+
+                  // Action Buttons
+                  AppButton(
+                    label: 'PLAY AGAIN',
+                    prominent: true,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  AppOutlineButton(
+                    label: 'CHOOSE CATEGORIES',
+                    onPressed: () {
+                      Navigator.of(context).popUntil(
+                        ModalRoute.withName(AppRoutes.categorySelection),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                ],
               ),
-              const SizedBox(height: 12),
-              AppOutlineButton(
-                label: 'CHOOSE CATEGORIES',
-                onPressed: () {
-                  Navigator.of(context).popUntil(
-                    ModalRoute.withName(AppRoutes.categorySelection),
-                  );
-                },
-              ),
-              const SizedBox(height: 16),
-            ],
+            ),
           ),
         ),
       ),
@@ -196,7 +206,9 @@ class ResultsScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  percent >= 70 ? Icons.trending_up_rounded : Icons.trending_down_rounded,
+                  percent >= 70
+                      ? Icons.trending_up_rounded
+                      : Icons.trending_down_rounded,
                   color: colorScheme.primary,
                   size: 18,
                 ),
@@ -258,16 +270,28 @@ class ResultsScreen extends StatelessWidget {
           context,
           'Round Duration',
           '${result.durationSeconds}s',
-          result.durationSeconds == 60 ? '1 full minute' : '${result.durationSeconds} seconds total',
+          result.durationSeconds == 60
+              ? '1 full minute'
+              : '${result.durationSeconds} seconds total',
         ),
-        Divider(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3), height: 1),
+        Divider(
+          color: Theme.of(context).colorScheme.outlineVariant
+              .withValues(alpha: 0.3),
+          height: 1,
+        ),
         _buildDetailRow(
           context,
           'Categories Played',
           '${result.categoryIds.length}',
-          result.categoryIds.length == 1 ? '1 active category' : '${result.categoryIds.length} categories mixed',
+          result.categoryIds.length == 1
+              ? '1 active category'
+              : '${result.categoryIds.length} categories mixed',
         ),
-        Divider(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3), height: 1),
+        Divider(
+          color: Theme.of(context).colorScheme.outlineVariant
+              .withValues(alpha: 0.3),
+          height: 1,
+        ),
         _buildDetailRow(
           context,
           'Total Attempted',
