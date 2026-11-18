@@ -22,6 +22,5 @@ class Category {
   });
 
   @override
-  String toString() =>
-      'Category(id: $id, name: $name, words: ${words.length})';
+  String toString() => 'Category(id: $id, name: $name, words: ${words.length})';
 }

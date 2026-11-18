@@ -1,12 +1,15 @@
+// Flutter SDK compatibility: Material remains the app's supported UI layer.
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../../core/theme/app_theme.dart';
 import '../../data/models/category.dart';
 import '../../data/repositories/category_repository.dart';
 import '../../game/models/game_config.dart';
 import '../../presentation/widgets/app_button.dart';
 import '../../presentation/widgets/app_scaffold.dart';
-import '../../presentation/widgets/category_card.dart';
+
 import '../../presentation/widgets/duration_chip.dart';
 
 /// The round settings screen.
@@ -17,10 +20,7 @@ class RoundSettingsScreen extends StatefulWidget {
   /// The IDs of categories selected on the previous screen.
   final List<String> initialCategoryIds;
 
-  const RoundSettingsScreen({
-    super.key,
-    required this.initialCategoryIds,
-  });
+  const RoundSettingsScreen({super.key, required this.initialCategoryIds});
 
   @override
   State<RoundSettingsScreen> createState() => _RoundSettingsScreenState();
@@ -74,10 +74,7 @@ class _RoundSettingsScreenState extends State<RoundSettingsScreen> {
       categoryIds: List.unmodifiable(_categoryIds),
       durationSeconds: _selectedDuration,
     );
-    Navigator.of(context).pushNamed(
-      AppRoutes.gameplay,
-      arguments: config,
-    );
+    Navigator.of(context).pushNamed(AppRoutes.gameplay, arguments: config);
   }
 
   @override
@@ -114,7 +111,7 @@ class _RoundSettingsScreenState extends State<RoundSettingsScreen> {
     final selectedCategories = _selectedCategories;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F5F0),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text('Round Settings'),
         centerTitle: true,
@@ -124,118 +121,142 @@ class _RoundSettingsScreenState extends State<RoundSettingsScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Selected categories section
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Categories',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Selected categories section
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Categories',
+                        style: Theme.of(context).textTheme.titleLarge
+                            ?.copyWith(fontWeight: FontWeight.w700),
                       ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .primary
-                            .withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        '${selectedCategories.length} selected',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary
+                              .withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          '${selectedCategories.length} selected',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    height: 76,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      itemCount: selectedCategories.length,
+                      itemBuilder: (context, index) {
+                        final category = selectedCategories[index];
+                        return Container(
+                          width: 116,
+                          margin: const EdgeInsets.only(right: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.primary
+                                  .withValues(alpha: 0.18),
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                categoryIcon(category.id),
+                                color: categoryColor(category.id),
+                                size: 24,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                category.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  height: 96,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    itemCount: selectedCategories.length,
-                    itemBuilder: (context, index) {
-                      final category = selectedCategories[index];
-                      return CategoryCard(
-                        category: category,
-                        isSelected: true,
-                        onTap: () {
-                          // Card is display-only here; removal handled elsewhere
-                        },
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Duration section
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Round Duration',
+                    style: Theme.of(context).textTheme.titleLarge
+                        ?.copyWith(fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: AppConstants.roundDurations.map((seconds) {
+                      return DurationChip(
+                        seconds: seconds,
+                        isSelected: _selectedDuration == seconds,
+                        onTap: () => _toggleDuration(seconds),
                       );
-                    },
+                    }).toList(),
                   ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 24),
-
-          // Duration section
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Round Duration',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
+                  const SizedBox(height: 8),
+                  Text(
+                    '${_selectedDuration ~/ 60 == 1 ? '1 minute' : '$_selectedDuration seconds'} per round',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: AppConstants.roundDurations.map((seconds) {
-                    return DurationChip(
-                      seconds: seconds,
-                      isSelected: _selectedDuration == seconds,
-                      onTap: () => _toggleDuration(seconds),
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  '${_selectedDuration ~/ 60 == 1 ? '1 minute' : '$_selectedDuration seconds'} per round',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
 
-          const Spacer(),
-
-          // Start button
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: AppButton(
-              label: 'Start Game',
-              onPressed: _startGame,
+            // Start button
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: AppButton(label: 'Start Game', onPressed: _startGame),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

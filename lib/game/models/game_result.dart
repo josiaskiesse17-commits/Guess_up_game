@@ -22,10 +22,12 @@ class GameResult {
     required this.skipped,
     required this.durationSeconds,
     required this.categoryIds,
-  })  : assert(correct >= 0, 'Correct count must not be negative'),
-        assert(skipped >= 0, 'Skipped count must not be negative'),
-        assert(_validDuration(durationSeconds),
-            'Duration must be 30, 60, 90, or 120 seconds');
+  }) : assert(correct >= 0, 'Correct count must not be negative'),
+       assert(skipped >= 0, 'Skipped count must not be negative'),
+       assert(
+         _validDuration(durationSeconds),
+         'Duration must be 30, 60, 90, or 120 seconds',
+       );
 
   static bool _validDuration(int value) =>
       const {30, 60, 90, 120}.contains(value);
@@ -53,10 +55,9 @@ class GameResult {
         skipped == other.skipped &&
         durationSeconds == other.durationSeconds &&
         categoryIds.length == other.categoryIds.length &&
-        categoryIds
-            .asMap()
-            .entries
-            .every((e) => e.value == other.categoryIds[e.key]);
+        categoryIds.asMap().entries.every(
+          (e) => e.value == other.categoryIds[e.key],
+        );
   }
 
   @override

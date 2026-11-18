@@ -1,6 +1,6 @@
+// Flutter SDK compatibility: Material remains the app's supported UI layer.
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
-
-import '../../core/theme/app_theme.dart';
 
 /// A reusable, themed primary action button.
 ///
@@ -24,13 +24,11 @@ class AppButton extends StatelessWidget {
     return FilledButton(
       onPressed: enabled ? onPressed : null,
       style: FilledButton.styleFrom(
-        backgroundColor: appTheme.colorScheme.primary,
-        foregroundColor: appTheme.colorScheme.onPrimary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         minimumSize: const Size(double.infinity, 56),
         padding: const EdgeInsets.symmetric(vertical: 18),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       child: Text(
         label,
@@ -62,13 +60,11 @@ class AppOutlineButton extends StatelessWidget {
     return OutlinedButton(
       onPressed: enabled ? onPressed : null,
       style: OutlinedButton.styleFrom(
-        foregroundColor: appTheme.colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.primary,
         minimumSize: const Size(double.infinity, 56),
         padding: const EdgeInsets.symmetric(vertical: 16),
-        side: BorderSide(color: appTheme.colorScheme.primary),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        side: BorderSide(color: Theme.of(context).colorScheme.primary),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       child: Text(
         label,

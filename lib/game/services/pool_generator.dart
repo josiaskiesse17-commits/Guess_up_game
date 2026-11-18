@@ -18,7 +18,10 @@ class PoolGenerator {
   ///   Removes duplicates using [Word.normalizedKey] (case-insensitive,
   ///   whitespace-normalized), preserving the first occurrence's display text.
   ///   Shuffles the result.
-  List<Word> generatePool(List<String> categoryIds, CategoryRepository repository) {
+  List<Word> generatePool(
+    List<String> categoryIds,
+    CategoryRepository repository,
+  ) {
     final words = <Word>[];
     for (final id in categoryIds) {
       final category = repository.findById(id);

@@ -9,21 +9,18 @@ class GameConfig {
   /// Round duration in seconds (30, 60, 90, or 120).
   final int durationSeconds;
 
-  GameConfig({
-    required this.categoryIds,
-    required this.durationSeconds,
-  })  : assert(categoryIds.isNotEmpty, 'At least one category is required'),
-        assert(_validDuration(durationSeconds),
-            'Duration must be 30, 60, 90, or 120 seconds');
+  GameConfig({required this.categoryIds, required this.durationSeconds})
+    : assert(categoryIds.isNotEmpty, 'At least one category is required'),
+      assert(
+        _validDuration(durationSeconds),
+        'Duration must be 30, 60, 90, or 120 seconds',
+      );
 
   static bool _validDuration(int value) =>
       const {30, 60, 90, 120}.contains(value);
 
   /// Creates a copy with the given fields replaced.
-  GameConfig copyWith({
-    List<String>? categoryIds,
-    int? durationSeconds,
-  }) {
+  GameConfig copyWith({List<String>? categoryIds, int? durationSeconds}) {
     return GameConfig(
       categoryIds: categoryIds ?? this.categoryIds,
       durationSeconds: durationSeconds ?? this.durationSeconds,

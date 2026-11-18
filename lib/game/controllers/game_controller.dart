@@ -18,23 +18,23 @@ class GameSessionState {
   final String? error;
 
   const GameSessionState.idle({this.error})
-      : status = SessionStatus.idle,
-        session = null,
-        timer = null;
+    : status = SessionStatus.idle,
+      session = null,
+      timer = null;
 
   const GameSessionState.playing(this.session, this.timer)
-      : status = SessionStatus.playing,
-        error = null;
+    : status = SessionStatus.playing,
+      error = null;
 
   const GameSessionState.completed(this.session)
-      : status = SessionStatus.completed,
-        timer = null,
-        error = null;
+    : status = SessionStatus.completed,
+      timer = null,
+      error = null;
 
   const GameSessionState.error(this.error)
-      : status = SessionStatus.idle,
-        session = null,
-        timer = null;
+    : status = SessionStatus.idle,
+      session = null,
+      timer = null;
 }
 
 /// Coordinates the game session, timer, and sensor lifecycle.
@@ -72,18 +72,22 @@ class GameController {
 
   /// Begin a round with the current configuration.
   Future<void> startGame() async {
-    final pool = _poolGenerator.generatePool(
-      _config.categoryIds,
-      _repository,
-    );
+    _timerSubscription?.cancel();
+    _timerSubscription = null;
+    final hadActiveRound = _timer != null;
+    _timer?.dispose();
+    _timer = null;
+    if (hadActiveRound) {
+      _sensor.stop();
+    }
+
+    final pool = _poolGenerator.generatePool(_config.categoryIds, _repository);
     if (pool.isEmpty) {
       state.value = const GameSessionState.error('No words available');
       return;
     }
-    _session = GameSession(
-      pool: pool,
-      durationSeconds: _config.durationSeconds,
-    )..start(pool, _config.durationSeconds);
+    _session = GameSession(pool: pool, durationSeconds: _config.durationSeconds)
+      ..start(pool, _config.durationSeconds);
     _timer = GameTimer(
       durationSeconds: _config.durationSeconds,
       onFinished: _onRoundComplete,
@@ -120,6 +124,7 @@ class GameController {
   }
 
   void _notify() {
+    if (_session == null || _timer == null) return;
     state.value = GameSessionState.playing(_session!, _timer!);
   }
 

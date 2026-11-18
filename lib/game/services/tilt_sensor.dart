@@ -70,9 +70,7 @@ class TiltSensor {
   /// Whether the sensor is currently subscribed and listening.
   bool get isListening => _isListening;
 
-  TiltSensor({
-    required this.config,
-  });
+  TiltSensor({required this.config});
 
   /// Start listening. Calibrates the neutral position from the first reading.
   Future<void> start({
@@ -88,7 +86,12 @@ class TiltSensor {
     _lastActionTime = null;
     _awaitingNeutral = false;
 
-    _subscription = accelerometerEventStream().listen(_onAccelerometerEvent);
+    _subscription = accelerometerEventStream().listen(
+      _onAccelerometerEvent,
+      onError: (_, _) {
+        stop();
+      },
+    );
   }
 
   void _onAccelerometerEvent(AccelerometerEvent event) {
@@ -103,8 +106,9 @@ class TiltSensor {
 
     // Cooldown protection.
     if (_lastActionTime != null) {
-      final elapsed =
-          DateTime.now().difference(_lastActionTime!).inMilliseconds;
+      final elapsed = DateTime.now()
+          .difference(_lastActionTime!)
+          .inMilliseconds;
       if (elapsed < config.cooldownMilliseconds) return;
     }
 
@@ -129,8 +133,12 @@ class TiltSensor {
 
   double _pitch(AccelerometerEvent event) {
     // Pitch from accelerometer: atan2(-y, sqrt(x*x + z*z)) in degrees.
-    return (math.atan2(-event.y, math.sqrt(event.x * event.x + event.z * event.z)) *
-            180 / math.pi);
+    return (math.atan2(
+          -event.y,
+          math.sqrt(event.x * event.x + event.z * event.z),
+        ) *
+        180 /
+        math.pi);
   }
 
   void _register(TiltAction action) {

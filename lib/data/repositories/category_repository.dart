@@ -33,9 +33,7 @@ class CategoryRepository {
   ///
   /// Missing or malformed asset data is surfaced as a clear error so the
   /// application can handle it safely at startup instead of crashing.
-  Future<void> load({
-    String assetPath = 'assets/data/categories.json',
-  }) async {
+  Future<void> load({String assetPath = 'assets/data/categories.json'}) async {
     if (_loaded) return;
     try {
       final jsonString = await rootBundle.loadString(assetPath);
@@ -57,12 +55,7 @@ class CategoryRepository {
 
   Category _parseCategory(Map<String, dynamic> json) {
     final words = (json['words'] as List<dynamic>)
-        .map(
-          (w) => Word(
-            id: w['id'] as String,
-            text: w['text'] as String,
-          ),
-        )
+        .map((w) => Word(id: w['id'] as String, text: w['text'] as String))
         .toList();
     return Category(
       id: json['id'] as String,

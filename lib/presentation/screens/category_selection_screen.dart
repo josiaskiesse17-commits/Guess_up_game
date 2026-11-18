@@ -1,3 +1,5 @@
+// Flutter SDK compatibility: Material remains the app's supported UI layer.
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_constants.dart';
@@ -58,10 +60,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
   }
 
   void _continue() {
-    Navigator.of(context).pushNamed(
-      AppRoutes.roundSettings,
-      arguments: _selectedIds.toList(),
-    );
+    Navigator.of(context)
+        .pushNamed(AppRoutes.roundSettings, arguments: _selectedIds.toList());
   }
 
   @override
@@ -69,9 +69,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
     if (_isLoading) {
       return AppScaffold(
         title: 'Categories',
-        body: const Center(
-          child: CircularProgressIndicator(),
-        ),
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -92,10 +90,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
-              AppButton(
-                label: 'Try Again',
-                onPressed: _loadCategories,
-              ),
+              AppButton(label: 'Try Again', onPressed: _loadCategories),
             ],
           ),
         ),
@@ -106,7 +101,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
     final selectedCount = _selectedIds.length;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F5F0),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text('Categories'),
         centerTitle: true,
@@ -117,10 +112,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
         ),
         actions: [
           if (selectedCount > 0)
-            TextButton(
-              onPressed: _continue,
-              child: const Text('Continue'),
-            ),
+            TextButton(onPressed: _continue, child: const Text('Continue')),
         ],
       ),
       body: Column(
@@ -128,44 +120,66 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
           // Selection counter
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            color: Colors.white,
-            child: Row(
+            padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.secondary,
+                ],
+              ),
+              borderRadius: const BorderRadius.vertical(
+                bottom: Radius.circular(24),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
+                const Text(
+                  'Build your round',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
                   ),
-                  decoration: BoxDecoration(
-                    color: selectedCount > 0
-                        ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
-                        : Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(20),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Pick one or mix categories for a surprise challenge.',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.85),
+                    fontSize: 14,
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.category,
-                        size: 16,
-                        color: selectedCount > 0
-                            ? Theme.of(context).colorScheme.primary
-                            : Colors.grey,
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '$selectedCount category'
-                        '${selectedCount == 1 ? '' : 's'} selected',
-                        style: TextStyle(
-                          color: selectedCount > 0
-                              ? Theme.of(context).colorScheme.primary
-                              : Colors.grey.shade600,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.18),
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                    ],
-                  ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.category, size: 16, color: Colors.white),
+                          const SizedBox(width: 8),
+                          Text(
+                            '$selectedCount category'
+                            '${selectedCount == 1 ? '' : 's'} selected',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -175,9 +189,9 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
           Expanded(
             child: GridView.builder(
               padding: const EdgeInsets.all(16),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.82,
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 220,
+                childAspectRatio: 0.9,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
               ),
@@ -199,10 +213,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
           ? Container(
               padding: const EdgeInsets.all(16),
               color: Colors.white,
-              child: AppButton(
-                label: 'Continue',
-                onPressed: _continue,
-              ),
+              child: AppButton(label: 'Continue', onPressed: _continue),
             )
           : null,
     );

@@ -1,3 +1,5 @@
+// Flutter SDK compatibility: Material remains the app's supported UI layer.
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_constants.dart';
@@ -36,9 +38,7 @@ class DurationChip extends StatelessWidget {
       label: Text(
         _label,
         style: theme.textTheme.labelLarge?.copyWith(
-          color: isSelected
-              ? Colors.white
-              : theme.colorScheme.onSurface,
+          color: isSelected ? Colors.white : theme.colorScheme.onSurface,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -51,9 +51,7 @@ class DurationChip extends StatelessWidget {
         color: isSelected ? theme.colorScheme.primary : Colors.grey.shade300,
         width: isSelected ? 2 : 1,
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       materialTapTargetSize: MaterialTapTargetSize.padded,
     );

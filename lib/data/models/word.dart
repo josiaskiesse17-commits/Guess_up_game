@@ -6,10 +6,7 @@ class Word {
   /// Display text, preserved exactly as authored.
   final String text;
 
-  Word({
-    required this.id,
-    required this.text,
-  });
+  Word({required this.id, required this.text});
 
   /// Normalized comparison key used for deduplication.
   ///

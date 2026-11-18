@@ -1,3 +1,5 @@
+// Flutter SDK compatibility: Material remains the app's supported UI layer.
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 
 /// A consistent page wrapper for all game screens.
@@ -8,24 +10,15 @@ class AppScaffold extends StatelessWidget {
   final Widget body;
   final String? title;
 
-  const AppScaffold({
-    super.key,
-    required this.body,
-    this.title,
-  });
+  const AppScaffold({super.key, required this.body, this.title});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: title != null
-          ? AppBar(
-              title: Text(title!),
-              centerTitle: true,
-            )
+          ? AppBar(title: Text(title!), centerTitle: true)
           : null,
-      body: SafeArea(
-        child: body,
-      ),
+      body: SafeArea(child: body),
     );
   }
 }

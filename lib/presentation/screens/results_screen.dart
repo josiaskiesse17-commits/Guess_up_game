@@ -1,10 +1,11 @@
+// Flutter SDK compatibility: Material remains the app's supported UI layer.
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../game/models/game_config.dart';
 import '../../game/models/game_result.dart';
 import '../../presentation/widgets/app_button.dart';
-import 'home_screen.dart';
 
 /// The results screen shown at the end of a round.
 ///
@@ -29,65 +30,66 @@ class ResultsScreen extends StatelessWidget {
             end: Alignment.bottomRight,
             colors: [
               primary,
-              primary.withOpacity(0.85),
-              primary.withOpacity(0.7),
+              primary.withValues(alpha: 0.85),
+              primary.withValues(alpha: 0.7),
             ],
           ),
         ),
         child: SafeArea(
-          child: Column(
-            children: [
-              const Spacer(flex: 2),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.only(bottom: 24),
+            child: Column(
+              children: [
+                const SizedBox(height: 48),
 
-              // Header
-              Column(
-                children: [
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.4),
-                        width: 3,
+                // Header
+                Column(
+                  children: [
+                    Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.4),
+                          width: 3,
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.emoji_events,
+                        color: Colors.white,
+                        size: 40,
                       ),
                     ),
-                    child: const Icon(
-                      Icons.emoji_events,
-                      color: Colors.white,
-                      size: 40,
+                    const SizedBox(height: 24),
+                    Text(
+                      'Round Complete',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 36,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -1,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Round Complete',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 36,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: -1,
+                    const SizedBox(height: 12),
+                    Text(
+                      'Great job!',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.9),
+                        fontSize: 20,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Great job!',
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
-                      fontSize: 20,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
+                  ],
+                ),
 
-              const Spacer(flex: 1),
+                const SizedBox(height: 32),
 
-              // Results card
-              Expanded(
-                child: Container(
+                // Results card
+                Container(
                   decoration: BoxDecoration(
                     color: colorScheme.surface,
                     borderRadius: const BorderRadius.only(
@@ -116,8 +118,8 @@ class ResultsScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -134,11 +136,11 @@ class ResultsScreen extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 32),
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 24,
             offset: const Offset(0, 8),
           ),
@@ -159,9 +161,8 @@ class ResultsScreen extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             'Correct Answers',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+            style: Theme.of(context).textTheme.titleLarge
+                ?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 16),
 
@@ -196,10 +197,10 @@ class ResultsScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
-              color: colorScheme.primary.withOpacity(0.1),
+              color: colorScheme.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: colorScheme.primary.withOpacity(0.3),
+                color: colorScheme.primary.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -228,7 +229,12 @@ class ResultsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailItem(String value, String label, IconData icon, Color color) {
+  Widget _buildDetailItem(
+    String value,
+    String label,
+    IconData icon,
+    Color color,
+  ) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -264,14 +270,16 @@ class ResultsScreen extends StatelessWidget {
             context,
             'Correct',
             '${result.correct}',
-            '${result.durationSeconds / 60 == 1 ? '1 minute' : '${result.durationSeconds} seconds'}',
+            result.durationSeconds == 60
+                ? '1 minute'
+                : '${result.durationSeconds} seconds',
           ),
           _buildDetailRow(
             context,
             'Skipped',
             '${result.skipped}',
             '${result.categoryIds.length} category'
-            '${result.categoryIds.length == 1 ? '' : 'ies'}',
+                '${result.categoryIds.length == 1 ? '' : 'ies'}',
           ),
           _buildDetailRow(
             context,
@@ -284,7 +292,12 @@ class ResultsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailRow(BuildContext context, String label, String value, String subtitle) {
+  Widget _buildDetailRow(
+    BuildContext context,
+    String label,
+    String value,
+    String subtitle,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
       child: Row(
@@ -364,10 +377,7 @@ class ResultsScreen extends StatelessWidget {
                 ),
                 child: const Text(
                   'Change Categories',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
               ),
             ),
@@ -376,11 +386,9 @@ class ResultsScreen extends StatelessWidget {
         const SizedBox(height: 16),
         OutlinedButton(
           onPressed: () {
-            Navigator.pushAndRemoveUntil(
+            Navigator.pushNamedAndRemoveUntil(
               context,
-              MaterialPageRoute(
-                builder: (_) => const HomeScreen(),
-              ),
+              AppRoutes.home,
               (route) => false,
             );
           },
@@ -395,10 +403,7 @@ class ResultsScreen extends StatelessWidget {
           ),
           child: const Text(
             'Return to Home',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
         ),
       ],

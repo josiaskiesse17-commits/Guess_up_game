@@ -52,10 +52,8 @@ class GameSession {
   /// Remaining words in the pool.
   int get remaining => (pool.length - _index).clamp(0, pool.length);
 
-  GameSession({
-    required this.pool,
-    required this.durationSeconds,
-  }) : assert(pool.isNotEmpty, 'Pool must not be empty');
+  GameSession({required this.pool, required this.durationSeconds})
+    : assert(pool.isNotEmpty, 'Pool must not be empty');
 
   /// Start (or restart) the session with a fresh pool and duration.
   void start(List<Word> freshPool, int duration) {
@@ -82,9 +80,11 @@ class GameSession {
   }
 
   void _advance() {
+    if (_index < pool.length) {
+      _lastShownNormalizedKey = pool[_index].normalizedKey;
+    }
     _index++;
     if (_index < pool.length) {
-      _lastShownNormalizedKey = pool[_index - 1].normalizedKey;
       return;
     }
     // Pool exhausted: attempt a safe reshuffle so the round can continue.

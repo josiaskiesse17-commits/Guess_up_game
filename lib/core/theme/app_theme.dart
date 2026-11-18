@@ -1,3 +1,5 @@
+// Flutter SDK compatibility: Material remains the app's supported UI layer.
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 
 /// Primary seed color — a warm terracotta that feels energetic and playful.
@@ -32,34 +34,17 @@ final ThemeData appTheme = ThemeData(
       fontWeight: FontWeight.bold,
       letterSpacing: -0.8,
     ),
-    headlineMedium: TextStyle(
-      fontSize: 24,
-      fontWeight: FontWeight.w700,
-    ),
-    titleLarge: TextStyle(
-      fontSize: 18,
-      fontWeight: FontWeight.w600,
-    ),
-    bodyLarge: TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w400,
-    ),
-    bodyMedium: TextStyle(
-      fontSize: 14,
-      fontWeight: FontWeight.w400,
-    ),
-    labelLarge: TextStyle(
-      fontSize: 14,
-      fontWeight: FontWeight.w600,
-    ),
+    headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
+    titleLarge: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+    bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+    bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+    labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       minimumSize: const Size(double.infinity, 56),
       padding: const EdgeInsets.symmetric(vertical: 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 0,
     ),
   ),
@@ -68,16 +53,12 @@ final ThemeData appTheme = ThemeData(
       minimumSize: const Size(double.infinity, 56),
       padding: const EdgeInsets.symmetric(vertical: 16),
       side: BorderSide(color: _seedColor, width: 2),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
   ),
   cardTheme: CardThemeData(
     elevation: 0,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(16),
-    ),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     margin: EdgeInsets.zero,
     color: Colors.white,
   ),
@@ -89,6 +70,22 @@ final ThemeData appTheme = ThemeData(
       borderSide: BorderSide.none,
     ),
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+  ),
+);
+
+final ThemeData darkAppTheme = appTheme.copyWith(
+  brightness: Brightness.dark,
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: _seedColor,
+    brightness: Brightness.dark,
+    secondary: _secondaryColor,
+    surface: const Color(0xFF171417),
+    error: const Color(0xFFFF8A80),
+  ),
+  scaffoldBackgroundColor: const Color(0xFF171417),
+  cardTheme: appTheme.cardTheme.copyWith(color: const Color(0xFF241F24)),
+  inputDecorationTheme: appTheme.inputDecorationTheme.copyWith(
+    fillColor: const Color(0xFF241F24),
   ),
 );
 

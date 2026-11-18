@@ -1,5 +1,7 @@
 import 'dart:async';
 
+// Flutter SDK compatibility: Material remains the app's supported UI layer.
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_constants.dart';
@@ -31,7 +33,10 @@ class GameplayScreen extends StatefulWidget {
 class _GameplayScreenState extends State<GameplayScreen>
     with WidgetsBindingObserver {
   late GameController _controller;
+  late CategoryRepository _repository;
   bool _countdownVisible = true;
+  bool _isPreparing = true;
+  String? _preparationError;
   int _countdownValue = 3;
   Timer? _countdownTimer;
 
@@ -40,9 +45,9 @@ class _GameplayScreenState extends State<GameplayScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
-    final repository = CategoryRepository();
+    _repository = CategoryRepository();
     _controller = GameController(
-      repository: repository,
+      repository: _repository,
       poolGenerator: PoolGenerator(),
       sensor: TiltSensor(
         config: const TiltSensorConfig(
@@ -56,7 +61,22 @@ class _GameplayScreenState extends State<GameplayScreen>
 
     _controller.state.addListener(_onStateChanged);
 
-    _startCountdown();
+    _prepareGame();
+  }
+
+  Future<void> _prepareGame() async {
+    try {
+      await _repository.load();
+      if (!mounted) return;
+      setState(() => _isPreparing = false);
+      _startCountdown();
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _isPreparing = false;
+        _preparationError = error.toString();
+      });
+    }
   }
 
   void _onStateChanged() {
@@ -87,22 +107,20 @@ class _GameplayScreenState extends State<GameplayScreen>
   }
 
   void _handleRoundComplete() {
+    final session = _controller.session;
+    final config = _controller.config;
     _countdownTimer?.cancel();
     _controller.state.removeListener(_onStateChanged);
     WidgetsBinding.instance.removeObserver(this);
     _controller.dispose();
 
     Future.delayed(const Duration(seconds: 1), () {
-      if (mounted) {
-        final session = _controller.session;
-        final config = _controller.config;
-        if (session != null) {
-          Navigator.pushReplacementNamed(
-            context,
-            AppRoutes.results,
-            arguments: GameResult.fromSession(session, config),
-          );
-        }
+      if (mounted && session != null) {
+        Navigator.pushReplacementNamed(
+          context,
+          AppRoutes.results,
+          arguments: GameResult.fromSession(session, config),
+        );
       }
     });
   }
@@ -138,6 +156,34 @@ class _GameplayScreenState extends State<GameplayScreen>
 
   @override
   Widget build(BuildContext context) {
+    if (_isPreparing) {
+      return _buildStatusScreen(
+        title: 'Preparing round',
+        child: const CircularProgressIndicator(),
+      );
+    }
+    if (_preparationError != null) {
+      return _buildStatusScreen(
+        title: 'Unable to start round',
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline, color: Colors.white, size: 56),
+            const SizedBox(height: 16),
+            Text(
+              _preparationError!,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.white),
+            ),
+            const SizedBox(height: 24),
+            AppOutlineButton(
+              label: 'Back',
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        ),
+      );
+    }
     return Scaffold(
       body: Stack(
         children: [
@@ -148,8 +194,9 @@ class _GameplayScreenState extends State<GameplayScreen>
                 end: Alignment.bottomRight,
                 colors: [
                   Theme.of(context).colorScheme.primary,
-                  Theme.of(context).colorScheme.primary.withOpacity(0.85),
-                  Theme.of(context).colorScheme.secondary.withOpacity(0.6),
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.85),
+                  Theme.of(context).colorScheme.secondary
+                      .withValues(alpha: 0.6),
                 ],
               ),
             ),
@@ -163,9 +210,49 @@ class _GameplayScreenState extends State<GameplayScreen>
     );
   }
 
+  Widget _buildStatusScreen({required String title, required Widget child}) {
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Theme.of(context).colorScheme.primary,
+              Theme.of(context).colorScheme.secondary,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 26,
+                      fontWeight: FontWeight.w800,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                  child,
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildCountdownOverlay() {
     return Container(
-      color: Colors.black.withOpacity(0.4),
+      color: Colors.black.withValues(alpha: 0.4),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -183,7 +270,7 @@ class _GameplayScreenState extends State<GameplayScreen>
             Text(
               'Get ready!',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.9),
+                color: Colors.white.withValues(alpha: 0.9),
                 fontSize: 24,
                 fontWeight: FontWeight.w600,
               ),
@@ -253,12 +340,12 @@ class _GameplayScreenState extends State<GameplayScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(isLow ? 0.3 : 0.2),
+        color: Colors.white.withValues(alpha: isLow ? 0.3 : 0.2),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isLow
-              ? Colors.redAccent.withOpacity(0.8)
-              : Colors.white.withOpacity(0.4),
+              ? Colors.redAccent.withValues(alpha: 0.8)
+              : Colors.white.withValues(alpha: 0.4),
           width: 2,
         ),
       ),
@@ -271,9 +358,7 @@ class _GameplayScreenState extends State<GameplayScreen>
           fontWeight: FontWeight.w800,
           letterSpacing: -1,
         ),
-        child: Text(
-          '$minutes:${seconds.toString().padLeft(2, '0')}',
-        ),
+        child: Text('$minutes:${seconds.toString().padLeft(2, '0')}'),
       ),
     );
   }
@@ -300,7 +385,7 @@ class _GameplayScreenState extends State<GameplayScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15),
+        color: Colors.white.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -323,29 +408,35 @@ class _GameplayScreenState extends State<GameplayScreen>
 
   Widget _buildWordDisplay(String word) {
     return Container(
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.sizeOf(context).width - 32,
+        maxHeight: 180,
+      ),
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.15),
+            color: Colors.black.withValues(alpha: 0.15),
             blurRadius: 24,
             offset: const Offset(0, 8),
           ),
         ],
       ),
-      child: Text(
-        word,
-        style: const TextStyle(
-          fontSize: 64,
-          fontWeight: FontWeight.w800,
-          color: Color(0xFF6D4C41),
-          letterSpacing: -2,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          word,
+          style: const TextStyle(
+            fontSize: 64,
+            fontWeight: FontWeight.w800,
+            color: Color(0xFF6D4C41),
+            letterSpacing: -2,
+          ),
+          textAlign: TextAlign.center,
+          maxLines: 2,
         ),
-        textAlign: TextAlign.center,
-        maxLines: 2,
-        overflow: TextOverflow.fade,
       ),
     );
   }
@@ -356,11 +447,12 @@ class _GameplayScreenState extends State<GameplayScreen>
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(16),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            runSpacing: 8,
             children: [
               const Icon(
                 Icons.keyboard_arrow_down,
@@ -398,7 +490,7 @@ class _GameplayScreenState extends State<GameplayScreen>
         Text(
           'Return to neutral between answers',
           style: TextStyle(
-            color: Colors.white.withOpacity(0.7),
+            color: Colors.white.withValues(alpha: 0.7),
             fontSize: 12,
             fontStyle: FontStyle.italic,
           ),

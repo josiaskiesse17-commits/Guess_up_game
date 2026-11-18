@@ -1,3 +1,5 @@
+// Flutter SDK compatibility: Material remains the app's supported UI layer.
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 
 import 'core/constants/app_constants.dart';
@@ -14,14 +16,32 @@ import 'presentation/screens/round_settings_screen.dart';
 ///
 /// Defines named navigation routes between screens using [onGenerateRoute] so
 /// that arguments (category IDs, game config) can be passed between screens.
-class App extends StatelessWidget {
+class App extends StatefulWidget {
   const App({super.key});
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  ThemeMode _themeMode = ThemeMode.light;
+
+  void _toggleTheme() {
+    setState(() {
+      _themeMode = _themeMode == ThemeMode.light
+          ? ThemeMode.dark
+          : ThemeMode.light;
+    });
+  }
 
   Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case AppRoutes.home:
         return MaterialPageRoute(
-          builder: (_) => const HomeScreen(),
+          builder: (_) => HomeScreen(
+            isDarkMode: _themeMode == ThemeMode.dark,
+            onToggleTheme: _toggleTheme,
+          ),
           settings: settings,
         );
       case AppRoutes.categorySelection:
@@ -32,9 +52,8 @@ class App extends StatelessWidget {
       case AppRoutes.roundSettings:
         final categoryIds = settings.arguments as List<String>?;
         return MaterialPageRoute(
-          builder: (_) => RoundSettingsScreen(
-            initialCategoryIds: categoryIds ?? const [],
-          ),
+          builder: (_) =>
+              RoundSettingsScreen(initialCategoryIds: categoryIds ?? const []),
           settings: settings,
         );
       case AppRoutes.gameplay:
@@ -61,6 +80,8 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: AppConstants.appName,
       theme: appTheme,
+      darkTheme: darkAppTheme,
+      themeMode: _themeMode,
       debugShowCheckedModeBanner: false,
       initialRoute: AppRoutes.home,
       onGenerateRoute: _onGenerateRoute,
