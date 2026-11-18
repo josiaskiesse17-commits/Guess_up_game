@@ -42,24 +42,26 @@ class AppButton extends StatelessWidget {
 class AppOutlineButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
+  final bool enabled;
 
   const AppOutlineButton({
     super.key,
     required this.label,
     required this.onPressed,
+    this.enabled = true,
   });
 
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
-      onPressed: onPressed,
+      onPressed: enabled ? onPressed : null,
       style: OutlinedButton.styleFrom(
         foregroundColor: appTheme.colorScheme.primary,
-        minimumSize: const Size(double.infinity, 52),
+        minimumSize: const Size(double.infinity, 56),
         padding: const EdgeInsets.symmetric(vertical: 16),
         side: BorderSide(color: appTheme.colorScheme.primary),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
         ),
       ),
       child: Text(

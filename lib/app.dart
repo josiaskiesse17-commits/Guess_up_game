@@ -4,6 +4,7 @@ import 'core/constants/app_constants.dart';
 import 'core/theme/app_theme.dart';
 import 'game/models/game_config.dart';
 import 'presentation/screens/category_selection_screen.dart';
+import 'presentation/screens/gameplay_screen.dart';
 import 'presentation/screens/home_screen.dart';
 import 'presentation/screens/round_settings_screen.dart';
 
@@ -38,7 +39,7 @@ class App extends StatelessWidget {
         final config = settings.arguments as GameConfig?;
         if (config == null) return null;
         return MaterialPageRoute(
-          builder: (_) => const GameplayPlaceholder(),
+          builder: (_) => GameplayScreen(config: config),
           settings: settings,
         );
       case AppRoutes.results:
@@ -58,21 +59,6 @@ class App extends StatelessWidget {
       theme: appTheme,
       initialRoute: AppRoutes.home,
       onGenerateRoute: _onGenerateRoute,
-    );
-  }
-}
-
-/// Placeholder gameplay screen (real UI implemented in Milestone 4).
-class GameplayPlaceholder extends StatelessWidget {
-  const GameplayPlaceholder({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Gameplay'), centerTitle: true),
-      body: const Center(
-        child: Text('Gameplay screen — implemented in Milestone 4'),
-      ),
     );
   }
 }

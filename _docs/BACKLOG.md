@@ -219,55 +219,55 @@ Initial target: 50–100 words per category.
 
 ## B4.1 — Implement gameplay screen
 
-- [ ] Display the current word prominently.
-- [ ] Display remaining time.
-- [ ] Display current score.
-- [ ] Display Correct and Skip feedback.
-- [ ] Provide clear tilt instructions.
-- [ ] Add on-screen fallback controls.
+- [x] Display the current word prominently.
+- [x] Display remaining time.
+- [x] Display current score.
+- [x] Display Correct and Skip feedback.
+- [x] Provide clear tilt instructions.
+- [x] Add on-screen fallback controls.
 
 **Acceptance criteria:**
 
-- The word is readable at a distance.
-- Gameplay information is easy to understand.
-- The player can complete a round without relying on sensors.
+- [x] The word is readable at a distance.
+- [x] Gameplay information is easy to understand.
+- [x] The player can complete a round without relying on sensors.
 
 ## B4.2 — Implement countdown
 
-- [ ] Implement countdown initialization.
-- [ ] Start the timer at the correct moment.
-- [ ] Update remaining time.
-- [ ] Stop the timer when the round ends.
-- [ ] Prevent timer updates after disposal.
-- [ ] Handle app lifecycle changes appropriately.
+- [x] Implement countdown initialization.
+- [x] Start the timer at the correct moment.
+- [x] Update remaining time.
+- [x] Stop the timer when the round ends.
+- [x] Prevent timer updates after disposal.
+- [x] Handle app lifecycle changes appropriately.
 
 **Acceptance criteria:**
 
-- All four durations work.
-- The timer does not continue after a completed round.
-- Timer updates do not create unnecessary overlapping timers.
-- The session ends exactly once.
+- [x] All four durations work.
+- [x] The timer does not continue after a completed round.
+- [x] Timer updates do not create unnecessary overlapping timers.
+- [x] The session ends exactly once.
 
 ## B4.3 — Implement tilt detection
 
-- [ ] Integrate a suitable sensor package if necessary.
-- [ ] Read device orientation or accelerometer data.
-- [ ] Establish neutral device orientation.
-- [ ] Detect the correct-answer tilt.
-- [ ] Detect the skip tilt.
-- [ ] Add threshold and cooldown handling.
-- [ ] Require return to neutral before another input.
-- [ ] Prevent input during countdown or transitions.
-- [ ] Clean up sensor subscriptions.
-- [ ] Handle unsupported sensors or sensor errors.
+- [x] Integrate a suitable sensor package if necessary.
+- [x] Read device orientation or accelerometer data.
+- [x] Establish neutral device orientation.
+- [x] Detect the correct-answer tilt.
+- [x] Detect the skip tilt.
+- [x] Add threshold and cooldown handling.
+- [x] Require return to neutral before another input.
+- [x] Prevent input during countdown or transitions.
+- [x] Clean up sensor subscriptions.
+- [x] Handle unsupported sensors or sensor errors.
 
 **Acceptance criteria:**
 
-- Correct tilt registers one correct answer.
-- Skip tilt registers one skipped word.
-- One tilt cannot register multiple actions.
-- Small movements do not trigger unwanted actions.
-- Sensor behavior is verified on a physical Android device.
+- [x] Correct tilt registers one correct answer.
+- [x] Skip tilt registers one skipped word.
+- [x] One tilt cannot register multiple actions.
+- [x] Small movements do not trigger unwanted actions.
+- [ ] Sensor behavior is verified on a physical Android device.
 
 ---
 
