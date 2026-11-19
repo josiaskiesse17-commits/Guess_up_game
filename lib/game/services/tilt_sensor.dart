@@ -1,7 +1,10 @@
 import 'dart:async';
-import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:sensors_plus/sensors_plus.dart';
+
+import '../../core/constants/app_constants.dart';
+import 'tilt_math.dart';
 
 /// Events emitted by the tilt sensor.
 enum TiltAction { correct, skip }
@@ -10,6 +13,11 @@ enum TiltAction { correct, skip }
 ///
 /// Values are kept configurable so physical tilt directions and thresholds
 /// can be verified on a target Android device without code changes.
+///
+/// Note: the real [TiltSensor] builds its internal [TiltDetector] from
+/// [SensorConstants], so these fields are kept for backward compatibility
+/// with tests and callers but the effective thresholds come from
+/// [SensorConstants].
 class TiltSensorConfig {
   /// Pitch threshold (degrees) beyond which a forward/down tilt is correct.
   final double correctThreshold;
@@ -21,9 +29,9 @@ class TiltSensorConfig {
   final int cooldownMilliseconds;
 
   const TiltSensorConfig({
-    this.correctThreshold = 15.0,
-    this.skipThreshold = 15.0,
-    this.cooldownMilliseconds = 800,
+    this.correctThreshold = SensorConstants.correctThreshold,
+    this.skipThreshold = SensorConstants.skipThreshold,
+    this.cooldownMilliseconds = SensorConstants.cooldownMilliseconds,
   });
 
   TiltSensorConfig copyWith({
@@ -45,14 +53,24 @@ class TiltSensorConfig {
 /// timer. The gameplay layer maps [TiltAction] events to Correct/Skip.
 ///
 /// Behavior:
-/// - Calibrates the neutral position from the first reading (the player
-///   should hold the phone in the intended starting position). Does not
-///   continuously recalibrate while the phone is moving.
-/// - Requires a return to neutral before another action is accepted.
+/// - The screen-normal (Z) angle is computed from every accelerometer sample,
+///   making detection orientation-independent (portrait, landscape-left and
+///   landscape-right give the same angle for the same screen tilt).
+/// - Calibrates neutral = average of the first [SensorConstants.calibrationSamples]
+///   smoothed samples after [TiltDetector.reset()]. No action fires during
+///   calibration.
+/// - Requires return to neutral before another action is accepted.
 /// - Applies thresholds and a cooldown to prevent accidental or multiple
 ///   registrations from a single tilt.
 class TiltSensor {
   final TiltSensorConfig config;
+
+  // TEMP tilt debug
+  final ValueNotifier<TiltDebugInfo> _debugNotifier =
+      ValueNotifier<TiltDebugInfo>(TiltDebugInfo());
+
+  /// Live debug info, populated only by the real sensor path.
+  ValueListenable<TiltDebugInfo> get debug => _debugNotifier;
 
   void Function(TiltAction)? _onCorrect;
   void Function(TiltAction)? _onSkip;
@@ -61,18 +79,24 @@ class TiltSensor {
   bool _disposed = false;
   bool _isListening = false;
 
-  double? _neutralPitch;
-  bool _calibrated = false;
-
-  DateTime? _lastActionTime;
-  bool _awaitingNeutral = false;
+  late final TiltDetector _detector;
 
   /// Whether the sensor is currently subscribed and listening.
   bool get isListening => _isListening;
 
-  TiltSensor({required this.config});
+  TiltSensor({required this.config}) {
+    _detector = TiltDetector(
+      alpha: SensorConstants.smoothingAlpha,
+      correctThreshold: config.correctThreshold,
+      skipThreshold: config.skipThreshold,
+      returnToNeutralDegrees: SensorConstants.returnToNeutralDegrees,
+      cooldownMilliseconds: config.cooldownMilliseconds,
+      calibrationSamples: SensorConstants.calibrationSamples,
+      invertTilt: SensorConstants.invertTilt,
+    );
+  }
 
-  /// Start listening. Calibrates the neutral position from the first reading.
+  /// Start listening. Calibrates neutral from the first smoothed samples.
   Future<void> start({
     void Function(TiltAction)? onCorrect,
     void Function(TiltAction)? onSkip,
@@ -81,69 +105,54 @@ class TiltSensor {
     _onCorrect = onCorrect;
     _onSkip = onSkip;
     _isListening = true;
-    _calibrated = false;
-    _neutralPitch = null;
-    _lastActionTime = null;
-    _awaitingNeutral = false;
+    _detector.reset();
 
-    _subscription = accelerometerEventStream().listen(
-      _onAccelerometerEvent,
-      onError: (_, _) {
-        stop();
-      },
-    );
+    _subscription =
+        accelerometerEventStream(samplingPeriod: SensorInterval.gameInterval)
+            .listen(
+              _onAccelerometerEvent,
+              onError: (_, _) {
+                stop();
+              },
+            );
   }
 
   void _onAccelerometerEvent(AccelerometerEvent event) {
     if (_disposed || !_isListening) return;
 
-    // Calibrate neutral from the first reading (still starting position).
-    if (!_calibrated) {
-      _neutralPitch = _pitch(event);
-      _calibrated = true;
-      return;
-    }
+    final angle = tiltAngleDegrees(event.x, event.y, event.z);
+    final action = _detector.update(angle);
 
-    // Cooldown protection.
-    if (_lastActionTime != null) {
-      final elapsed = DateTime.now()
-          .difference(_lastActionTime!)
-          .inMilliseconds;
-      if (elapsed < config.cooldownMilliseconds) return;
+    // TEMP tilt debug
+    final neutral = _detector.neutralAngle ?? 0.0;
+    var delta = _detector.smoothedAngle - neutral;
+    if (SensorConstants.invertTilt) {
+      delta = -delta;
     }
+    _debugNotifier.value = TiltDebugInfo(
+      rawX: event.x,
+      rawY: event.y,
+      rawZ: event.z,
+      smoothedAngle: _detector.smoothedAngle,
+      neutralAngle: _detector.neutralAngle,
+      delta: delta,
+      correctThreshold: config.correctThreshold,
+      skipThreshold: config.skipThreshold,
+      returnToNeutralDegrees: SensorConstants.returnToNeutralDegrees,
+      lastAction: _detector.lastAction,
+      waitingForNeutral: _detector.isWaitingForNeutral,
+      calibrating: _detector.isCalibrating,
+    );
 
-    final pitch = _pitch(event);
-    final delta = pitch - _neutralPitch!;
-
-    // Require return to neutral before accepting another action.
-    if (_awaitingNeutral) {
-      if (delta.abs() <= config.correctThreshold * 0.3) {
-        _awaitingNeutral = false;
-      }
-      return;
-    }
-
-    // Detect deliberate tilts.
-    if (delta >= config.correctThreshold) {
-      _register(TiltAction.correct);
-    } else if (delta <= -config.skipThreshold) {
-      _register(TiltAction.skip);
-    }
+    if (action == null) return;
+    final tiltAction = _mapToTiltAction(action);
+    _register(tiltAction);
   }
 
-  double _pitch(AccelerometerEvent event) {
-    // Pitch from accelerometer: atan2(-y, sqrt(x*x + z*z)) in degrees.
-    return (math.atan2(
-          -event.y,
-          math.sqrt(event.x * event.x + event.z * event.z),
-        ) *
-        180 /
-        math.pi);
-  }
+  TiltAction _mapToTiltAction(TiltDetectorAction a) =>
+      a == TiltDetectorAction.correct ? TiltAction.correct : TiltAction.skip;
 
   void _register(TiltAction action) {
-    _lastActionTime = DateTime.now();
-    _awaitingNeutral = true;
     if (action == TiltAction.correct) {
       _onCorrect?.call(action);
     } else {

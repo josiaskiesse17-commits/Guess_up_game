@@ -3,6 +3,7 @@ import 'dart:async';
 // Flutter SDK compatibility: Material remains the app's supported UI layer.
 // ignore: deprecated_member_use
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_theme.dart';
@@ -15,6 +16,7 @@ import '../../game/models/game_session.dart';
 import '../../game/models/session_status.dart';
 import '../../game/services/pool_generator.dart';
 import '../../game/services/tilt_sensor.dart';
+import '../../game/services/tilt_math.dart';
 import '../../game/services/game_audio.dart';
 import '../../presentation/widgets/app_button.dart';
 
@@ -33,7 +35,7 @@ class _GameplayScreenState extends State<GameplayScreen>
   late GameController _controller;
   late CategoryRepository _repository;
   late GameAudio _audio;
-  bool? _wasLandscape;
+  late final TiltSensor _sensor;
   bool _countdownVisible = true;
   bool _isPreparing = true;
   String? _preparationError;
@@ -45,21 +47,27 @@ class _GameplayScreenState extends State<GameplayScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    // TEMP tilt debug: lock to landscape while gameplay is active.
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
 
     _repository = CategoryRepository();
     _audio = GameAudio();
+    _sensor = TiltSensor(
+      config: const TiltSensorConfig(
+        correctThreshold: SensorConstants.correctThreshold,
+        skipThreshold: SensorConstants.skipThreshold,
+        cooldownMilliseconds: SensorConstants.cooldownMilliseconds,
+      ),
+    );
     _controller = GameController(
       repository: _repository,
       poolGenerator: PoolGenerator(),
       onCorrect: () => _audio.playCorrect(),
       onSkip: () => _audio.playSkip(),
-      sensor: TiltSensor(
-        config: const TiltSensorConfig(
-          correctThreshold: 15.0,
-          skipThreshold: 15.0,
-          cooldownMilliseconds: 800,
-        ),
-      ),
+      sensor: _sensor,
       config: widget.config,
     );
 
@@ -70,12 +78,9 @@ class _GameplayScreenState extends State<GameplayScreen>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final isLandscape =
-        MediaQuery.orientationOf(context) == Orientation.landscape;
-    if (_wasLandscape != null && _wasLandscape != isLandscape) {
-      _controller.recalibrateSensor();
-    }
-    _wasLandscape = isLandscape;
+    // Orientation-change recalibration intentionally removed: the Z-based
+    // angle is orientation-independent and restarting the sensor mid-round
+    // would lose input.
   }
 
   Future<void> _prepareGame() async {
@@ -134,6 +139,8 @@ class _GameplayScreenState extends State<GameplayScreen>
     _countdownTimer?.cancel();
     _controller.state.removeListener(_onStateChanged);
     WidgetsBinding.instance.removeObserver(this);
+    // TEMP tilt debug: restore all orientations when leaving gameplay.
+    _restoreOrientations();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -165,7 +172,15 @@ class _GameplayScreenState extends State<GameplayScreen>
     WidgetsBinding.instance.removeObserver(this);
     _controller.dispose();
     _audio.dispose();
+    // TEMP tilt debug: restore all orientations on disposal (covers back
+    // button and any other exit path).
+    _restoreOrientations();
     super.dispose();
+  }
+
+  /// TEMP tilt debug: restore all device orientations.
+  void _restoreOrientations() {
+    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
   }
 
   @override
@@ -214,6 +229,8 @@ class _GameplayScreenState extends State<GameplayScreen>
           children: [
             if (_countdownVisible) _buildCountdownOverlay(colorScheme),
             if (!_countdownVisible) _buildGameContent(colorScheme),
+            // TEMP tilt debug
+            if (SensorConstants.showTiltDebug) _buildTiltDebugOverlay(),
           ],
         ),
       ),
@@ -547,6 +564,100 @@ class _GameplayScreenState extends State<GameplayScreen>
           ),
         ],
       ),
+    );
+  }
+
+  // TEMP tilt debug
+  Widget _buildTiltDebugOverlay() {
+    return ValueListenableBuilder<TiltDebugInfo>(
+      valueListenable: _sensor.debug,
+      builder: (context, debug, _) {
+        final d = debug;
+        return Positioned(
+          top: 10,
+          left: 10,
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.65),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'raw: ${d.rawX.toStringAsFixed(1)}, '
+                  '${d.rawY.toStringAsFixed(1)}, '
+                  '${d.rawZ.toStringAsFixed(1)}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontFamily: 'monospace',
+                  ),
+                ),
+                Text(
+                  'angle: ${d.smoothedAngle.toStringAsFixed(1)}°',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontFamily: 'monospace',
+                  ),
+                ),
+                Text(
+                  'neutral: ${d.neutralAngle?.toStringAsFixed(1) ?? '--'}°',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontFamily: 'monospace',
+                  ),
+                ),
+                Text(
+                  'delta: ${d.delta.toStringAsFixed(1)}°',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontFamily: 'monospace',
+                  ),
+                ),
+                Text(
+                  'thr: ±${d.correctThreshold.toStringAsFixed(0)}° '
+                  '| rtn: ${d.returnToNeutralDegrees.toStringAsFixed(0)}°',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontFamily: 'monospace',
+                  ),
+                ),
+                Text(
+                  'last: ${d.lastAction?.toString().split('.').last ?? 'none'}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontFamily: 'monospace',
+                  ),
+                ),
+                Text(
+                  'wait-neutral: ${d.waitingForNeutral}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontFamily: 'monospace',
+                  ),
+                ),
+                Text(
+                  'calibrating: ${d.calibrating}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontFamily: 'monospace',
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
