@@ -125,13 +125,21 @@ class GameController {
   }
 
   void _onRoundComplete() {
+    _timerSubscription?.cancel();
+    _timerSubscription = null;
     _session?.complete();
     _sensor.stop();
+    if (_disposed) return;
     state.value = GameSessionState.completed(_session!);
   }
 
   void _notify() {
-    if (_session == null || _timer == null) return;
+    if (_disposed ||
+        _session == null ||
+        _timer == null ||
+        !_session!.isPlaying) {
+      return;
+    }
     state.value = GameSessionState.playing(_session!, _timer!);
   }
 

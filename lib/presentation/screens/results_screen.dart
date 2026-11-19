@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../game/models/game_result.dart';
+import '../../game/models/game_config.dart';
 import '../../presentation/widgets/app_button.dart';
 
 /// The results screen shown at the end of a round.
@@ -102,7 +103,13 @@ class ResultsScreen extends StatelessWidget {
                     label: 'PLAY AGAIN',
                     prominent: true,
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      Navigator.of(context).pushReplacementNamed(
+                        AppRoutes.gameplay,
+                        arguments: GameConfig(
+                          categoryIds: result.categoryIds,
+                          durationSeconds: result.durationSeconds,
+                        ),
+                      );
                     },
                   ),
                   const SizedBox(height: 12),

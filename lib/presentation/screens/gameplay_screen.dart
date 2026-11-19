@@ -92,6 +92,17 @@ class _GameplayScreenState extends State<GameplayScreen>
     }
   }
 
+  void _navigateToResults() {
+    final session = _controller.session;
+    final config = _controller.config;
+    if (!mounted || session == null) return;
+    Navigator.pushReplacementNamed(
+      context,
+      AppRoutes.results,
+      arguments: GameResult.fromSession(session, config),
+    );
+  }
+
   void _onStateChanged() {
     if (_roundCompleteHandled) return;
     final state = _controller.state.value;
@@ -117,25 +128,16 @@ class _GameplayScreenState extends State<GameplayScreen>
   }
 
   void _handleRoundComplete() {
+    if (_roundCompleteHandled) return;
     _roundCompleteHandled = true;
-    final session = _controller.session;
-    final config = _controller.config;
     _countdownTimer?.cancel();
     _controller.state.removeListener(_onStateChanged);
     WidgetsBinding.instance.removeObserver(this);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _navigateToResults();
       _controller.dispose();
-    });
-
-    Future.delayed(const Duration(milliseconds: 600), () {
-      if (mounted && session != null) {
-        Navigator.pushReplacementNamed(
-          context,
-          AppRoutes.results,
-          arguments: GameResult.fromSession(session, config),
-        );
-      }
     });
   }
 
