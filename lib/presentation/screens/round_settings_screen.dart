@@ -73,7 +73,8 @@ class _RoundSettingsScreenState extends State<RoundSettingsScreen> {
       categoryIds: List.unmodifiable(_categoryIds),
       durationSeconds: _selectedDuration,
     );
-    Navigator.of(context).pushNamed(AppRoutes.gameplay, arguments: config);
+    Navigator.of(context)
+        .pushReplacementNamed(AppRoutes.gameplay, arguments: config);
   }
 
   @override
@@ -141,6 +142,67 @@ class _RoundSettingsScreenState extends State<RoundSettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primaryContainer.withValues(alpha: 0.55),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: colorScheme.primary.withValues(alpha: 0.35),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Choose Round Time',
+                        style: Theme.of(context).textTheme.titleLarge
+                            ?.copyWith(fontWeight: FontWeight.w900),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Select how long the round will last.',
+                        style: Theme.of(context).textTheme.bodyMedium
+                            ?.copyWith(color: colorScheme.onSurfaceVariant),
+                      ),
+                      const SizedBox(height: 16),
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: AppConstants.roundDurations.map((seconds) {
+                          return DurationChip(
+                            seconds: seconds,
+                            isSelected: _selectedDuration == seconds,
+                            onTap: () => _toggleDuration(seconds),
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.timer_outlined,
+                            size: 16,
+                            color: colorScheme.primary,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            '${_selectedDuration ~/ 60 == 1 ? '1 minute' : '$_selectedDuration seconds'} per round',
+                            style: TextStyle(
+                              color: colorScheme.primary,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 28),
+
                 // Selected Categories Card Container
                 Container(
                   width: double.infinity,
@@ -239,52 +301,6 @@ class _RoundSettingsScreenState extends State<RoundSettingsScreen> {
                       ),
                     ],
                   ),
-                ),
-
-                const SizedBox(height: 28),
-
-                // Round Duration Section
-                Text(
-                  'Round Duration',
-                  style: Theme.of(context).textTheme.titleMedium
-                      ?.copyWith(fontWeight: FontWeight.w800),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'Select how long your guessing session will run.',
-                  style: Theme.of(context).textTheme.bodyMedium
-                      ?.copyWith(color: colorScheme.onSurfaceVariant),
-                ),
-                const SizedBox(height: 16),
-                Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: AppConstants.roundDurations.map((seconds) {
-                    return DurationChip(
-                      seconds: seconds,
-                      isSelected: _selectedDuration == seconds,
-                      onTap: () => _toggleDuration(seconds),
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.timer_outlined,
-                      size: 16,
-                      color: colorScheme.primary,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      '${_selectedDuration ~/ 60 == 1 ? '1 minute' : '$_selectedDuration seconds'} per round',
-                      style: TextStyle(
-                        color: colorScheme.primary,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ],
                 ),
               ],
             ),

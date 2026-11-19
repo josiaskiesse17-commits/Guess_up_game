@@ -56,6 +56,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
   }
 
   void _continue() {
+    if (_selectedIds.isEmpty) return;
     Navigator.of(context)
         .pushNamed(AppRoutes.roundSettings, arguments: _selectedIds.toList());
   }
@@ -124,7 +125,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
             TextButton(
               onPressed: _continue,
               child: Text(
-                'Continue',
+                'Choose Time',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: colorScheme.primary,
@@ -242,7 +243,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 760),
                   child: AppButton(
-                    label: 'CONTINUE ($selectedCount)',
+                    label: 'CHOOSE TIME ($selectedCount)',
                     onPressed: _continue,
                   ),
                 ),
