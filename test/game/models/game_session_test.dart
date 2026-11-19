@@ -2,10 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:guessup_game/data/models/word.dart';
 import 'package:guessup_game/game/models/game_session.dart';
 
-List<Word> _pool(int n) => List.generate(
-      n,
-      (i) => Word(id: 'w$i', text: 'Word $i'),
-    );
+List<Word> _pool(int n) =>
+    List.generate(n, (i) => Word(id: 'w$i', text: 'Word $i'));
 
 void main() {
   test('Correct and Skip advance and score correctly', () {
@@ -38,7 +36,10 @@ void main() {
 
     expect(session.correct, 4);
     expect(session.skipped, 1);
-    expect(session.isExhausted, false); // reshuffles instead of terminally exhausting
+    expect(
+      session.isExhausted,
+      false,
+    ); // reshuffles instead of terminally exhausting
     expect(session.currentWord, isNotNull);
   });
 

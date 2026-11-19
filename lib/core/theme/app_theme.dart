@@ -10,6 +10,10 @@ const Color _darkSeed = Color(0xFF9BA5FF);
 const Color _lightSecondary = Color(0xFF28B8A3);
 const Color _darkSecondary = Color(0xFF62E6D0);
 
+/// Feedback colors used on gameplay stat chips (legible in both themes).
+const Color correctStatColor = Color(0xFF15803D);
+const Color skipStatColor = Color(0xFFC2410C);
+
 /// Neutral surface hierarchies.
 const Color _lightBg = Color(0xFFF5F7FC);
 const Color _lightCard = Color(0xFFFFFFFF);

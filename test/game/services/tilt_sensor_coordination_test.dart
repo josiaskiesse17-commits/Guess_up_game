@@ -43,26 +43,24 @@ class FakeTiltSensor extends TiltSensor {
   void simulateSkip() => _capturedOnSkip?.call(TiltAction.skip);
 }
 
-List<Word> _words(List<Map<String, String>> entries) => entries
-    .map((e) => Word(id: e['id']!, text: e['text']!))
-    .toList();
+List<Word> _words(List<Map<String, String>> entries) =>
+    entries.map((e) => Word(id: e['id']!, text: e['text']!)).toList();
 
 CategoryRepository _repoWithCategories() => CategoryRepository.withData([
-      Category(
-        id: 'c1',
-        name: 'Animals',
-        icon: 'pets',
-        words: _words([
-          {'id': 'a1', 'text': 'Lion'},
-          {'id': 'a2', 'text': 'Tiger'},
-          {'id': 'a3', 'text': 'Bear'},
-        ]),
-      ),
-    ]);
+  Category(
+    id: 'c1',
+    name: 'Animals',
+    icon: 'pets',
+    words: _words([
+      {'id': 'a1', 'text': 'Lion'},
+      {'id': 'a2', 'text': 'Tiger'},
+      {'id': 'a3', 'text': 'Bear'},
+    ]),
+  ),
+]);
 
 void main() {
-  test('GameController wires tilt sensor callbacks to registerCorrect/registerSkip',
-      () async {
+  test('GameController wires tilt sensor callbacks to registerCorrect/registerSkip', () async {
     final repo = _repoWithCategories();
     final sensor = FakeTiltSensor();
     final controller = GameController(

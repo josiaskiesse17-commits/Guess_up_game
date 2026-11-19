@@ -4,10 +4,7 @@ import 'package:guessup_game/game/models/game_config.dart';
 void main() {
   test('GameConfig accepts valid durations', () {
     for (final duration in const [30, 60, 90, 120]) {
-      final config = GameConfig(
-        categoryIds: ['c1'],
-        durationSeconds: duration,
-      );
+      final config = GameConfig(categoryIds: ['c1'], durationSeconds: duration);
       expect(config.durationSeconds, duration);
       expect(config.categoryIds, ['c1']);
     }
@@ -30,10 +27,7 @@ void main() {
   });
 
   test('GameConfig copyWith preserves unchanged fields', () {
-    final original = GameConfig(
-      categoryIds: ['c1', 'c2'],
-      durationSeconds: 60,
-    );
+    final original = GameConfig(categoryIds: ['c1', 'c2'], durationSeconds: 60);
     final copied = original.copyWith(durationSeconds: 30);
     expect(copied.categoryIds, ['c1', 'c2']);
     expect(copied.durationSeconds, 30);

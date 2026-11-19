@@ -2,8 +2,6 @@
 // ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 
-import '../../core/constants/app_constants.dart';
-
 /// A selectable duration chip for choosing the round length.
 ///
 /// Shows the duration in seconds with a minute label for longer options.
@@ -44,9 +42,7 @@ class DurationChip extends StatelessWidget {
           fontWeight: FontWeight.w600,
         ),
       ),
-      selectedColor: AppConstants.defaultDurationSeconds == seconds
-          ? theme.colorScheme.primary
-          : theme.colorScheme.primary,
+      selectedColor: theme.colorScheme.primaryContainer,
       checkmarkColor: theme.colorScheme.onPrimary,
       backgroundColor: theme.colorScheme.surfaceContainer,
       side: BorderSide(

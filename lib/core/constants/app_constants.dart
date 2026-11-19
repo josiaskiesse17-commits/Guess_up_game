@@ -7,6 +7,9 @@ class AppConstants {
   /// Default round duration in seconds.
   static const int defaultDurationSeconds = 60;
 
+  /// Application version displayed on the home screen.
+  static const String appVersion = '0.1.0';
+
   /// Asset path for bundled category/word data.
   static const String categoriesAssetPath = 'assets/data/categories.json';
 }

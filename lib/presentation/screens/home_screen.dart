@@ -78,7 +78,7 @@ class HomeScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
-                                  'v2.4 Ready',
+                                  'v${AppConstants.appVersion} Ready',
                                   style: TextStyle(
                                     color: colorScheme.primary,
                                     fontSize: 12,

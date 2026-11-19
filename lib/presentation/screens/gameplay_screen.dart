@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../../core/theme/app_theme.dart';
 import '../../data/repositories/category_repository.dart';
 import '../../game/controllers/game_controller.dart';
 import '../../game/controllers/game_timer.dart';
@@ -413,14 +414,14 @@ class _GameplayScreenState extends State<GameplayScreen>
         _buildStatChip(
           Icons.check_rounded,
           '${session?.correct ?? 0}',
-          Colors.green,
+          correctStatColor,
           colorScheme,
         ),
         const SizedBox(width: 8),
         _buildStatChip(
           Icons.skip_next_rounded,
           '${session?.skipped ?? 0}',
-          Colors.orange,
+          skipStatColor,
           colorScheme,
         ),
       ],

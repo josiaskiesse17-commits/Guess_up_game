@@ -4,9 +4,8 @@ import 'package:guessup_game/data/models/word.dart';
 import 'package:guessup_game/data/repositories/category_repository.dart';
 import 'package:guessup_game/game/services/pool_generator.dart';
 
-List<Word> _words(List<Map<String, String>> entries) => entries
-    .map((e) => Word(id: e['id']!, text: e['text']!))
-    .toList();
+List<Word> _words(List<Map<String, String>> entries) =>
+    entries.map((e) => Word(id: e['id']!, text: e['text']!)).toList();
 
 void main() {
   test('single category produces its own word pool', () {
@@ -102,15 +101,14 @@ void main() {
         id: 'c4',
         name: 'One',
         icon: 'x',
-        words: _words([{'id': 'o1', 'text': 'Solo'}]),
+        words: _words([
+          {'id': 'o1', 'text': 'Solo'},
+        ]),
       ),
     ]);
     final generator = PoolGenerator();
     final pool = generator.generatePool(['c4'], repo);
-    final again = generator.reshuffle(
-      pool,
-      lastKey: pool.first.normalizedKey,
-    );
+    final again = generator.reshuffle(pool, lastKey: pool.first.normalizedKey);
     expect(again.length, 1);
   });
 }
